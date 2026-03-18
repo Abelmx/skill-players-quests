@@ -61,6 +61,7 @@ class Message(BaseModel):
     tool_call_id: str | None = None
     tool_calls: list[dict[str, Any]] | None = None
     name: str | None = None
+    reasoning_content: str | None = None
 
 
 class LLMResponse(BaseModel):
@@ -71,6 +72,7 @@ class LLMResponse(BaseModel):
     input_tokens: int = 0
     output_tokens: int = 0
     finish_reason: str = ""
+    reasoning_content: str | None = None
 
 
 class LLMProvider(ABC):

@@ -4,13 +4,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import shutil
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any
-
 import click
 from rich.console import Console
 from rich.live import Live
@@ -80,22 +77,11 @@ def _build_run_dir(base: Path, provider_name: str, model: str) -> Path:
     return run_dir
 
 
-def _collect_artifacts(trace: Any, task_id: str, artifacts_dir: Path) -> int:
-    """Copy files written during task execution into artifacts/{task_id}/."""
-    collected = 0
-    if not trace.files_written:
-        return collected
-    dest_dir = artifacts_dir / task_id
-    dest_dir.mkdir(parents=True, exist_ok=True)
-    for filepath in trace.files_written:
-        src = Path(filepath)
-        if src.exists() and src.is_file():
-            try:
-                shutil.copy2(src, dest_dir / src.name)
-                collected += 1
-            except OSError:
-                pass
-    return collected
+def _make_task_artifacts_dir(run_dir: Path, task_id: str) -> Path:
+    """Create and return the artifacts directory for a specific task."""
+    d = run_dir / "artifacts" / task_id
+    d.mkdir(parents=True, exist_ok=True)
+    return d
 
 
 def _format_duration(seconds: float) -> str:
@@ -162,15 +148,17 @@ async def _run_model_tasks(
 ) -> list[TaskResult]:
     """Run all tasks for a single model, respecting concurrency semaphore."""
     jsonl_path = run_dir / "results.jsonl"
-    artifacts_dir = run_dir / "artifacts"
     results: list[TaskResult] = []
 
     async def _run_one(task):
         async with semaphore:
             progress.current_task = task.id
-            result = await orchestrator.run_task(task, provider, mode)
+            task_artifacts = _make_task_artifacts_dir(run_dir, task.id)
+            result = await orchestrator.run_task(
+                task, provider, mode,
+                artifacts_dir=str(task_artifacts),
+            )
             append_task_result(jsonl_path, result)
-            _collect_artifacts(result.trace, task.id, artifacts_dir)
 
             progress.done += 1
             if result.oracle_result.task_score >= 1.0:

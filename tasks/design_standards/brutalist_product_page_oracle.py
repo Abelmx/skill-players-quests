@@ -7,21 +7,27 @@ from spq.evaluation.oracle import check_skill_selection
 FORBIDDEN_FONTS = ["Inter", "Arial", "Roboto", "Helvetica"]
 
 
-def evaluate(output: str, trace: ExecutionTrace) -> OracleResult:
-    html_path = Path("index.html")
-    if not html_path.exists():
-        # Check if written via write_file tool
-        for p in trace.files_written:
-            if p.endswith("index.html"):
-                html_path = Path(p)
-                break
+def _find_html(filename: str, trace: ExecutionTrace) -> Path | None:
+    """Look for an HTML file in artifacts_dir, then trace.files_written."""
+    if trace.artifacts_dir:
+        p = Path(trace.artifacts_dir) / filename
+        if p.exists():
+            return p
+    for fp in trace.files_written:
+        if fp.endswith(filename) and Path(fp).exists():
+            return Path(fp)
+    return None
 
-    if not html_path.exists():
+
+def evaluate(output: str, trace: ExecutionTrace) -> OracleResult:
+    html_path = _find_html("index.html", trace)
+
+    if html_path is None:
         return OracleResult(
             task_score=0.0,
             skill_selection_score=check_skill_selection(trace, ["frontend-design"]),
             instruction_following_score=0.0,
-            details={"error": "index.html not found"},
+            details={"error": "index.html not found in artifacts"},
         )
 
     html = html_path.read_text(encoding="utf-8")

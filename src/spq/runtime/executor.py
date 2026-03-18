@@ -20,6 +20,12 @@ class ToolExecutor:
         self.timeout = timeout
         self.work_dir = work_dir
 
+    _KNOWN_PARAMS: dict[str, set[str]] = {
+        "read_file": {"path"},
+        "bash": {"command"},
+        "write_file": {"path", "content"},
+    }
+
     async def execute(self, tool_name: str, arguments: dict) -> str:
         handler = {
             "read_file": self._read_file,
@@ -30,8 +36,11 @@ class ToolExecutor:
         if handler is None:
             return f"Error: unknown tool '{tool_name}'"
 
+        known = self._KNOWN_PARAMS.get(tool_name, set())
+        filtered = {k: v for k, v in arguments.items() if k in known} if known else arguments
+
         try:
-            return await handler(**arguments)
+            return await handler(**filtered)
         except Exception as e:
             logger.error("Tool %s failed: %s", tool_name, e)
             return f"Error: {e}"

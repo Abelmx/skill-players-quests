@@ -76,6 +76,7 @@ class ConversationManager:
                 role="assistant",
                 content=response.content,
                 tool_calls=response.tool_calls,
+                reasoning_content=response.reasoning_content,
             )
             messages.append(assistant_msg)
 

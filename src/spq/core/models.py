@@ -66,6 +66,7 @@ class ExecutionTrace(BaseModel):
     provider_name: str
     model_name: str
     activation_mode: ActivationMode
+    artifacts_dir: str = ""
     turns: list[ConversationTurn] = Field(default_factory=list)
     final_output: str = ""
     activated_skills: list[str] = Field(default_factory=list)

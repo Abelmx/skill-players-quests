@@ -81,10 +81,13 @@ class Orchestrator:
         task: TaskDef,
         provider: LLMProvider,
         mode: ActivationMode | None = None,
+        artifacts_dir: str = "",
     ) -> TaskResult:
         mode = mode or self.config.activation_mode
 
-        system_prompt = build_system_prompt(self.registry, task, mode)
+        system_prompt = build_system_prompt(
+            self.registry, task, mode, artifacts_dir=artifacts_dir,
+        )
         executor = ToolExecutor(timeout=self.config.bash_timeout)
         conv = ConversationManager(provider, executor, max_turns=self.config.max_turns)
 
@@ -94,6 +97,7 @@ class Orchestrator:
         )
 
         trace = await conv.run(system_prompt, task, mode)
+        trace.artifacts_dir = artifacts_dir
 
         oracle_result = self._evaluate(task, trace)
 

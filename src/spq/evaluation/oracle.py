@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 from spq.core.models import ExecutionTrace, OracleResult
 
@@ -38,36 +39,44 @@ def check_bash_patterns(trace: ExecutionTrace, patterns: list[str]) -> float:
     return matched / len(patterns)
 
 
-def check_file_exists(path: str) -> bool:
-    """Check if a file exists at the given path."""
-    from pathlib import Path
+def _resolve_artifact(filename: str, trace: ExecutionTrace) -> Path | None:
+    """Resolve a filename inside the task's artifacts directory."""
+    if not trace.artifacts_dir:
+        return None
+    p = Path(trace.artifacts_dir) / filename
+    return p if p.exists() else None
 
-    return Path(path).exists()
+
+def check_file_exists(filename: str, trace: ExecutionTrace) -> bool:
+    """Check if an output file exists in the task's artifacts directory."""
+    return _resolve_artifact(filename, trace) is not None
 
 
-def check_file_is_valid_image(path: str) -> bool:
-    """Check if a file is a valid image using basic header checks."""
-    from pathlib import Path
-
-    p = Path(path)
-    if not p.exists():
+def check_file_is_valid_image(filename: str, trace: ExecutionTrace) -> bool:
+    """Check if a file in the artifacts directory is a valid image."""
+    p = _resolve_artifact(filename, trace)
+    if p is None:
         return False
 
     data = p.read_bytes()
     if len(data) < 8:
         return False
 
-    # PNG magic bytes
     if data[:8] == b"\x89PNG\r\n\x1a\n":
         return True
-    # JPEG magic bytes
     if data[:2] == b"\xff\xd8":
         return True
-    # GIF
     if data[:6] in (b"GIF87a", b"GIF89a"):
         return True
-    # WebP
     if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
         return True
 
     return False
+
+
+def check_file_size(filename: str, trace: ExecutionTrace, min_bytes: int = 0) -> bool:
+    """Check if a file in the artifacts directory meets a minimum size."""
+    p = _resolve_artifact(filename, trace)
+    if p is None:
+        return False
+    return p.stat().st_size > min_bytes

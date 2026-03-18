@@ -69,12 +69,15 @@ class OpenAIProvider(LLMProvider):
                     },
                 })
 
+        reasoning = getattr(message, "reasoning_content", None)
+
         return LLMResponse(
             content=message.content,
             tool_calls=tool_calls_data,
             input_tokens=response.usage.prompt_tokens if response.usage else 0,
             output_tokens=response.usage.completion_tokens if response.usage else 0,
             finish_reason=choice.finish_reason or "",
+            reasoning_content=reasoning if reasoning else None,
         )
 
     @staticmethod
@@ -88,4 +91,6 @@ class OpenAIProvider(LLMProvider):
             d["tool_calls"] = msg.tool_calls
         if msg.name is not None:
             d["name"] = msg.name
+        if msg.reasoning_content is not None:
+            d["reasoning_content"] = msg.reasoning_content
         return d
