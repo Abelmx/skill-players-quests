@@ -71,15 +71,15 @@ def _build_run_dir(base: Path, provider_name: str, model: str) -> Path:
     """Create output directory: results/{provider_model}/{YYYYMMDD-HHmmss}/"""
     model_slug = f"{provider_name}_{model}".replace("/", "_")
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    run_dir = base / model_slug / timestamp
+    run_dir = (base / model_slug / timestamp).resolve()
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "artifacts").mkdir(exist_ok=True)
     return run_dir
 
 
 def _make_task_artifacts_dir(run_dir: Path, task_id: str) -> Path:
-    """Create and return the artifacts directory for a specific task."""
-    d = run_dir / "artifacts" / task_id
+    """Create and return the absolute artifacts directory for a specific task."""
+    d = (run_dir / "artifacts" / task_id).resolve()
     d.mkdir(parents=True, exist_ok=True)
     return d
 

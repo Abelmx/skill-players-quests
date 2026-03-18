@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRUTALIST PRODUCT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #f5f0e6;
+      --color-primary: #1a1a1a;
+      --color-accent: #e63946;
+      --color-secondary: #457b9d;
+      --color-highlight: #f4a261;
+      --font-display: 'Syne', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-mono);
+      background-color: var(--color-bg);
+      color: var(--color-primary);
+      min-height: 100vh;
+      padding: 2rem;
+      background-image: 
+        linear-gradient(90deg, var(--color-primary) 1px, transparent 1px),
+        linear-gradient(var(--color-primary) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-blend-mode: difference;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      min-height: calc(100vh - 4rem);
+    }
+
+    .product-info {
+      padding: 2rem;
+      background: var(--color-bg);
+      border: 4px solid var(--color-primary);
+      box-shadow: 12px 12px 0 var(--color-primary);
+      animation: slideInLeft 0.6s ease-out;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .product-badge {
+      display: inline-block;
+      background: var(--color-accent);
+      color: var(--color-bg);
+      padding: 0.5rem 1rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .product-title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 0.9;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      word-break: break-word;
+    }
+
+    .product-title span {
+      display: block;
+      color: var(--color-accent);
+    }
+
+    .product-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border-left: 4px solid var(--color-secondary);
+      background: rgba(69, 123, 157, 0.1);
+    }
+
+    .price-section {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .price {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .price-original {
+      font-size: 1.25rem;
+      text-decoration: line-through;
+      color: var(--color-secondary);
+      opacity: 0.7;
+    }
+
+    .buy-button {
+      display: inline-block;
+      background: var(--color-primary);
+      color: var(--color-bg);
+      padding: 1.25rem 3rem;
+      font-family: var(--font-mono);
+      font-size: 1.125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .buy-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--color-accent);
+      transition: left 0.3s ease;
+      z-index: -1;
+    }
+
+    .buy-button:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 8px 8px 0 var(--color-highlight);
+    }
+
+    .buy-button:hover::before {
+      left: 0;
+    }
+
+    .buy-button:focus {
+      outline: 4px solid var(--color-highlight);
+      outline-offset: 4px;
+    }
+
+    .product-visual {
+      position: relative;
+      animation: slideInRight 0.6s ease-out 0.2s both;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .image-placeholder {
+      aspect-ratio: 4/5;
+      background: var(--color-primary);
+      border: 4px solid var(--color-primary);
+      box-shadow: 16px 16px 0 var(--color-accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .image-placeholder:hover {
+      transform: translate(-8px, -8px);
+      box-shadow: 24px 24px 0 var(--color-highlight);
+    }
+
+    .image-placeholder::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 10px,
+          rgba(245, 240, 230, 0.1) 10px,
+          rgba(245, 240, 230, 0.1) 20px
+        );
+      animation: diagonalMove 20s linear infinite;
+    }
+
+    @keyframes diagonalMove {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 100px 100px;
+      }
+    }
+
+    .placeholder-icon {
+      font-size: 6rem;
+      color: var(--color-bg);
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .placeholder-text {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--color-bg);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sticker {
+      position: absolute;
+      background: var(--color-highlight);
+      color: var(--color-primary);
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      transform: rotate(-5deg);
+      z-index: 10;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: rotate(-5deg) translateY(0);
+      }
+      50% {
+        transform: rotate(-5deg) translateY(-10px);
+      }
+    }
+
+    .sticker-1 {
+      top: -20px;
+      right: -20px;
+    }
+
+    .sticker-2 {
+      bottom: -20px;
+      left: -20px;
+      background: var(--color-secondary);
+      color: var(--color-bg);
+      transform: rotate(5deg);
+      animation-delay: 0.5s;
+    }
+
+    .features {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .feature {
+      background: var(--color-primary);
+      color: var(--color-bg);
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .product-info {
+        padding: 1.5rem;
+      }
+
+      .product-title {
+        font-size: 2.5rem;
+      }
+
+      .price {
+        font-size: 2rem;
+      }
+
+      .sticker {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="product-info" aria-labelledby="product-title">
+      <span class="product-badge">NEW ARRIVAL</span>
+      
+      <h1 id="product-title" class="product-title">
+        Raw<span>Concrete</span>Speaker
+      </h1>
+      
+      <div class="product-description">
+        <p>手工水泥音响，呈现原始工业美学。每个产品都是独一无二的艺术品，融合了粗犷的材质与现代精密音频技术。</p>
+      </div>
+      
+      <div class="price-section">
+        <span class="price" aria-label="价格">¥1,299</span>
+        <span class="price-original" aria-label="原价">¥1,599</span>
+      </div>
+      
+      <button class="buy-button" type="button" aria-label="立即购买 Raw Concrete Speaker">
+        立即购买
+      </button>
+      
+      <div class="features" role="list" aria-label="产品特性">
+        <span class="feature" role="listitem">蓝牙5.0</span>
+        <span class="feature" role="listitem">30小时续航</span>
+        <span class="feature" role="listitem">手工制作</span>
+      </div>
+    </section>
+    
+    <section class="product-visual" aria-label="产品图片">
+      <div class="image-placeholder">
+        <span class="sticker sticker-1">热卖中</span>
+        <span class="sticker sticker-2">限量版</span>
+        <span class="placeholder-icon" aria-hidden="true">🔊</span>
+        <span class="placeholder-text">产品图片</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
