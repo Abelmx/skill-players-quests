@@ -1,0 +1,38 @@
+# 框架默认配置。
+# 环境变量 SPQ_* 优先级更高，会覆盖此文件中的值。
+# 详见 .env.example 了解完整的环境变量列表。
+
+skills_dir: "skills"
+tasks_dir: "tasks"
+
+activation_mode: "catalog"  # "catalog" (mode A) or "full_inject" (mode B)
+max_turns: 10
+bash_timeout: 30
+
+# Provider = API 代理层（1 级），models = 该代理下可评测的模型列表（2 级）
+# 所有 provider 均使用 OpenAI-compatible 接口。
+providers:
+  boyue:
+    api_key_env: "SPQ_API_KEY"
+    base_url: "http://35.220.164.252:3888/v1"
+    models:
+      - "gpt-5.4"
+      - "claude-sonnet-4-20250514"
+  guiji:
+    api_key_env: "GUIJI_API_KEY"
+    base_url: "https://api.siliconflow.cn/v1/"
+    models:
+      - "Pro/MiniMaxAI/MiniMax-M2.5"
+      - "Pro/zai-org/GLM-5"
+      - "Pro/moonshotai/Kimi-K2.5"
+  intern:
+    api_key_env: "INTERN_API_KEY"
+    base_url: "https://chat.intern-ai.org.cn/api/v1/"
+    models:
+      - "intern-s1"
+      - "intern-s1-pro"
+  # local-vllm:
+  #   api_key_env: "SPQ_VLLM_API_KEY"
+  #   base_url: "http://localhost:8000/v1"
+  #   models:
+  #     - "qwen-32b"

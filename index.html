@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brutalist 产品展示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4efdf;
+      --panel: #fff9ec;
+      --text: #111111;
+      --accent: #ff4d00;
+      --accent-2: #ffd400;
+      --line: #111111;
+      --shadow: 10px 10px 0 #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      font-family: 'Space Mono', monospace;
+      background-image:
+        linear-gradient(90deg, transparent 0 96%, var(--line) 96% 100%),
+        linear-gradient(transparent 0 96%, var(--line) 96% 100%);
+      background-size: 48px 48px;
+      overflow-x: hidden;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+      position: relative;
+    }
+
+    .page::before {
+      content: "NEW DROP";
+      position: absolute;
+      top: 18px;
+      right: 28px;
+      background: var(--accent-2);
+      border: 4px solid var(--line);
+      padding: 8px 14px;
+      font-family: 'Syne', cursive;
+      font-weight: 800;
+      font-size: 1rem;
+      transform: rotate(8deg);
+      box-shadow: 6px 6px 0 var(--line);
+      animation: stamp 2.5s ease-in-out infinite;
+    }
+
+    .hero {
+      border: 5px solid var(--line);
+      background: var(--panel);
+      padding: 36px;
+      box-shadow: var(--shadow);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 78vh;
+    }
+
+    .kicker {
+      display: inline-block;
+      width: fit-content;
+      background: var(--accent);
+      color: #fff;
+      border: 3px solid var(--line);
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      transform: translateX(-10px);
+    }
+
+    h1 {
+      font-family: 'Syne', cursive;
+      font-size: clamp(3rem, 8vw, 6.8rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      margin: 0 0 18px;
+      max-width: 8ch;
+      text-wrap: balance;
+    }
+
+    .desc {
+      max-width: 42ch;
+      font-size: 1rem;
+      line-height: 1.7;
+      padding: 14px 16px;
+      border-left: 5px solid var(--line);
+      background: #ffffffb5;
+      margin: 0;
+    }
+
+    .side {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .image-box {
+      border: 5px solid var(--line);
+      background: #b8f3ff;
+      box-shadow: var(--shadow);
+      min-height: 420px;
+      position: relative;
+      overflow: hidden;
+      transform: rotate(-2deg);
+    }
+
+    .image-box::before,
+    .image-box::after {
+      content: "";
+      position: absolute;
+      border: 5px solid var(--line);
+    }
+
+    .image-box::before {
+      width: 62%;
+      height: 62%;
+      background: var(--accent-2);
+      top: 16%;
+      left: 18%;
+      transform: rotate(12deg);
+      animation: floatA 4s ease-in-out infinite;
+    }
+
+    .image-box::after {
+      width: 36%;
+      height: 36%;
+      background: var(--accent);
+      bottom: 8%;
+      right: 10%;
+      transform: rotate(-18deg);
+      animation: floatB 3.4s ease-in-out infinite;
+    }
+
+    .placeholder-label {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-family: 'Syne', cursive;
+      font-size: clamp(1.4rem, 4vw, 2.8rem);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+      padding: 20px;
+      z-index: 2;
+    }
+
+    .buy-panel {
+      border: 5px solid var(--line);
+      background: #ffffff;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      position: relative;
+      transform: translateX(-42px);
+    }
+
+    .price-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      border-bottom: 4px solid var(--line);
+      padding-bottom: 14px;
+    }
+
+    .price-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .price {
+      font-family: 'Syne', cursive;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+    }
+
+    .meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      border: 3px solid var(--line);
+      padding: 8px 12px;
+      background: var(--accent-2);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .buy-btn {
+      appearance: none;
+      border: 4px solid var(--line);
+      background: var(--accent);
+      color: #fff;
+      padding: 18px 20px;
+      font-family: 'Syne', cursive;
+      font-size: 1.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      box-shadow: 0 0 0 var(--line);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+    }
+
+    .buy-btn:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 8px 8px 0 var(--line);
+      background: #e64500;
+    }
+
+    .buy-btn:focus-visible {
+      outline: 4px dashed var(--line);
+      outline-offset: 4px;
+    }
+
+    @keyframes floatA {
+      0%, 100% { transform: rotate(12deg) translateY(0); }
+      50% { transform: rotate(8deg) translateY(-16px); }
+    }
+
+    @keyframes floatB {
+      0%, 100% { transform: rotate(-18deg) translateX(0); }
+      50% { transform: rotate(-10deg) translateX(-14px); }
+    }
+
+    @keyframes stamp {
+      0%, 100% { transform: rotate(8deg) scale(1); }
+      50% { transform: rotate(4deg) scale(1.05); }
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        margin-top: 0;
+      }
+
+      .buy-panel {
+        transform: translateX(0);
+      }
+
+      .hero {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-labelledby="product-title">
+      <div>
+        <span class="kicker">Brutalist Selection</span>
+        <h1 id="product-title">MONO BLOCK Speaker</h1>
+        <p class="desc">
+          一款带有强烈工业感的桌面音箱展示页。用夸张边框、冲突配色和不对称结构，直接把产品气质拍到你脸上。
+        </p>
+      </div>
+    </section>
+
+    <section class="side" aria-label="产品图片与购买信息">
+      <div class="image-box" role="img" aria-label="产品图片占位区">
+        <div class="placeholder-label">Product Image Placeholder</div>
+      </div>
+
+      <div class="buy-panel">
+        <div class="price-row">
+          <div>
+            <div class="price-label">Price</div>
+            <div class="price">¥1,299</div>
+          </div>
+          <div class="meta">
+            <span class="tag">限量发售</span>
+            <span class="tag">免运费</span>
+          </div>
+        </div>
+
+        <button class="buy-btn" type="button" aria-label="立即购买 MONO BLOCK Speaker">
+          立即购买
+        </button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

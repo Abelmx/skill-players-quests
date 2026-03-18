@@ -1,0 +1,19 @@
+id: "usd-jpy-rate"
+name: "查询美元兑日元汇率"
+category: "realtime-data"
+query: "查询今天美元兑日元（USD/JPY）的汇率，给出具体数值"
+available_skills:
+  - "exchange-rate"
+  - "weather"
+  - "package-registry"
+  - "calculator"
+  - "text-translator"
+expected_skills:
+  - "exchange-rate"
+expected_actions:
+  - type: "bash"
+    pattern: "curl.*frankfurter|get_rate"
+oracle:
+  module: "tasks.realtime_data.usd_jpy_rate_oracle"
+difficulty: "easy"
+tags: ["realtime-data", "single-skill", "api-call"]

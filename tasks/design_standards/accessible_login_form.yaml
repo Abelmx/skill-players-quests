@@ -1,0 +1,19 @@
+id: "accessible-login-form"
+name: "WCAG 无障碍登录表单"
+category: "design-standards"
+query: "创建一个符合 WCAG 2.1 AA 标准的登录表单页面，包含用户名、密码字段和登录按钮。保存为 login.html"
+available_skills:
+  - "frontend-design"
+  - "email-sender"
+  - "calculator"
+  - "qr-code"
+  - "file-compressor"
+expected_skills:
+  - "frontend-design"
+expected_actions:
+  - type: "read_skill"
+    skill: "frontend-design"
+oracle:
+  module: "tasks.design_standards.accessible_login_form_oracle"
+difficulty: "medium"
+tags: ["design-standards", "accessibility", "single-skill"]

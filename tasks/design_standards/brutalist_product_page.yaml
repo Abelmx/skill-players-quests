@@ -1,0 +1,21 @@
+id: "brutalist-product-page"
+name: "Brutalist 风格产品展示页"
+category: "design-standards"
+query: "创建一个 brutalist 风格的产品展示页面，包含产品标题、产品图片占位区、价格信息和购买按钮。保存为 index.html，CSS 内联或在同一文件中"
+available_skills:
+  - "frontend-design"
+  - "image-gen"
+  - "code-formatter"
+  - "text-translator"
+  - "file-compressor"
+expected_skills:
+  - "frontend-design"
+expected_actions:
+  - type: "read_skill"
+    skill: "frontend-design"
+  - type: "bash"
+    pattern: "write_file|cat.*index\\.html"
+oracle:
+  module: "tasks.design_standards.brutalist_product_page_oracle"
+difficulty: "medium"
+tags: ["design-standards", "frontend", "single-skill"]

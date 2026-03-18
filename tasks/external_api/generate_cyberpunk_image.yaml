@@ -1,0 +1,19 @@
+id: "generate-cyberpunk-image"
+name: "生成赛博朋克城市夜景图片"
+category: "external-api"
+query: "生成一张赛博朋克风格的城市夜景图片，包含霓虹灯和雨天效果，保存为 output.png"
+available_skills:
+  - "image-gen"
+  - "frontend-design"
+  - "weather"
+  - "calculator"
+  - "file-compressor"
+expected_skills:
+  - "image-gen"
+expected_actions:
+  - type: "bash"
+    pattern: "generate_image"
+oracle:
+  module: "tasks.external_api.generate_cyberpunk_image_oracle"
+difficulty: "medium"
+tags: ["external-api", "image-generation", "single-skill"]

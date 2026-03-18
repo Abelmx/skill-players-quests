@@ -1,0 +1,19 @@
+id: "npm-express-version"
+name: "查询 npm express 最新版本"
+category: "service-interaction"
+query: "查询 npm 包 express 的最新版本号和发布日期，给出具体信息"
+available_skills:
+  - "package-registry"
+  - "github"
+  - "weather"
+  - "email-sender"
+  - "calculator"
+expected_skills:
+  - "package-registry"
+expected_actions:
+  - type: "bash"
+    pattern: "curl.*registry\\.npmjs|query_registry"
+oracle:
+  module: "tasks.service_interaction.npm_express_version_oracle"
+difficulty: "easy"
+tags: ["service-interaction", "npm", "single-skill"]

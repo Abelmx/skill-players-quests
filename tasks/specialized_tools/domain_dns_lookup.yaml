@@ -1,0 +1,19 @@
+id: "domain-dns-lookup"
+name: "域名 DNS 查询"
+category: "specialized-tools"
+query: "查询域名 openai.com 的 A 记录和 MX 记录，列出具体的 IP 地址和邮件服务器"
+available_skills:
+  - "dns-lookup"
+  - "web-screenshot"
+  - "github"
+  - "weather"
+  - "text-translator"
+expected_skills:
+  - "dns-lookup"
+expected_actions:
+  - type: "bash"
+    pattern: "dig|nslookup|lookup\\.sh"
+oracle:
+  module: "tasks.specialized_tools.domain_dns_lookup_oracle"
+difficulty: "easy"
+tags: ["specialized-tools", "dns", "single-skill"]

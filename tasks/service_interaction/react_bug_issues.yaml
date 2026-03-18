@@ -1,0 +1,19 @@
+id: "react-bug-issues"
+name: "查询 React DevTools Issues"
+category: "service-interaction"
+query: "查询 facebook/react 仓库中标签含 'Component: Developer Tools' 的最新 3 个 open issues 的标题和编号"
+available_skills:
+  - "github"
+  - "package-registry"
+  - "dns-lookup"
+  - "code-formatter"
+  - "web-screenshot"
+expected_skills:
+  - "github"
+expected_actions:
+  - type: "bash"
+    pattern: "gh.*issue|gh_query"
+oracle:
+  module: "tasks.service_interaction.react_bug_issues_oracle"
+difficulty: "medium"
+tags: ["service-interaction", "github", "single-skill"]

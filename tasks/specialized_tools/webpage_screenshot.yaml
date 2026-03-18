@@ -1,0 +1,19 @@
+id: "webpage-screenshot"
+name: "网页截图"
+category: "specialized-tools"
+query: "对 https://example.com 进行全页面截图，保存为 screenshot.png"
+available_skills:
+  - "web-screenshot"
+  - "image-gen"
+  - "dns-lookup"
+  - "frontend-design"
+  - "code-formatter"
+expected_skills:
+  - "web-screenshot"
+expected_actions:
+  - type: "bash"
+    pattern: "screenshot|playwright"
+oracle:
+  module: "tasks.specialized_tools.webpage_screenshot_oracle"
+difficulty: "medium"
+tags: ["specialized-tools", "browser", "single-skill"]

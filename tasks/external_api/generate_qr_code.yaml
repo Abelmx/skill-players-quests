@@ -1,0 +1,19 @@
+id: "generate-qr-code"
+name: "生成 QR 码图片"
+category: "external-api"
+query: "为 https://github.com/openclaw/openclaw 生成一个 QR 码图片，保存为 qr_output.png"
+available_skills:
+  - "qr-code"
+  - "image-gen"
+  - "github"
+  - "web-screenshot"
+  - "text-translator"
+expected_skills:
+  - "qr-code"
+expected_actions:
+  - type: "bash"
+    pattern: "generate_qr"
+oracle:
+  module: "tasks.external_api.generate_qr_code_oracle"
+difficulty: "easy"
+tags: ["external-api", "qr-code", "single-skill"]

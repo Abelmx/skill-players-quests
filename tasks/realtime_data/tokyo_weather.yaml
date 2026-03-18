@@ -1,0 +1,19 @@
+id: "tokyo-weather"
+name: "查询东京实时天气"
+category: "realtime-data"
+query: "查询东京当前的气温（摄氏度）和天气状况，直接告诉我数值"
+available_skills:
+  - "weather"
+  - "exchange-rate"
+  - "dns-lookup"
+  - "calculator"
+  - "email-sender"
+expected_skills:
+  - "weather"
+expected_actions:
+  - type: "bash"
+    pattern: "curl.*wttr\\.in|curl.*open-meteo|get_weather"
+oracle:
+  module: "tasks.realtime_data.tokyo_weather_oracle"
+difficulty: "easy"
+tags: ["realtime-data", "single-skill", "api-call"]
