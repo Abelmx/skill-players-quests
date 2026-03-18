@@ -1,48 +1,47 @@
-name: LLM Skills Evaluation
+name: SPQ Evaluation
 
 on:
   workflow_dispatch:
     inputs:
-      provider:
-        description: "LLM provider to evaluate (openai, anthropic, vllm)"
-        required: true
-        default: "openai"
-        type: choice
-        options:
-          - openai
-          - anthropic
-          - vllm
-      mode:
-        description: "Skill activation mode"
-        required: true
-        default: "catalog"
-        type: choice
-        options:
-          - catalog
-          - full_inject
       tasks:
         description: "Comma-separated task IDs (leave empty for all)"
         required: false
         type: string
+      concurrency:
+        description: "Parallel tasks per model"
+        required: false
+        default: "1"
+        type: string
+      mode:
+        description: "Skill activation mode (leave empty to read from config)"
+        required: false
+        type: choice
+        options:
+          - ""
+          - catalog
+          - full_inject
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   evaluate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     container:
       image: python:3.12-slim
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install system dependencies
         run: |
           apt-get update && apt-get install -y --no-install-recommends \
-            curl \
-            dnsutils \
-            whois \
-            git \
+            curl dnsutils whois git jq \
             && rm -rf /var/lib/apt/lists/*
 
       - name: Install gh CLI
@@ -56,15 +55,39 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install --upgrade pip
-          pip install -e ".[dev]"
-          pip install httpx Pillow playwright qrcode[pil]
+          pip install -e ".[skills]"
           playwright install --with-deps chromium || true
 
+      # ── Echo configuration from branch ──
+      - name: Show evaluation config
+        env:
+          SPQ_API_KEY: ${{ secrets.SPQ_API_KEY }}
+          GUIJI_API_KEY: ${{ secrets.GUIJI_API_KEY }}
+          INTERN_API_KEY: ${{ secrets.INTERN_API_KEY }}
+        run: |
+          echo "## Evaluation Configuration" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Branch**: \`${GITHUB_REF_NAME}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Triggered by**: ${GITHUB_ACTOR}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Tasks**: ${TASKS_INPUT:-all}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Concurrency**: ${CONCURRENCY_INPUT:-1}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          spq show-config 2>&1 | head -60 >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          echo "──── Config Echo ────"
+          spq show-config
+        env:
+          TASKS_INPUT: ${{ inputs.tasks }}
+          CONCURRENCY_INPUT: ${{ inputs.concurrency }}
+
+      # ── Run evaluation ──
       - name: Run evaluation
         env:
-          SPQ_OPENAI_API_KEY: ${{ secrets.SPQ_OPENAI_API_KEY }}
-          SPQ_ANTHROPIC_API_KEY: ${{ secrets.SPQ_ANTHROPIC_API_KEY }}
-          SPQ_VLLM_API_KEY: ${{ secrets.SPQ_VLLM_API_KEY }}
+          SPQ_API_KEY: ${{ secrets.SPQ_API_KEY }}
+          GUIJI_API_KEY: ${{ secrets.GUIJI_API_KEY }}
+          INTERN_API_KEY: ${{ secrets.INTERN_API_KEY }}
           IMAGE_GEN_API_KEY: ${{ secrets.IMAGE_GEN_API_KEY }}
           IMAGE_GEN_BASE_URL: ${{ secrets.IMAGE_GEN_BASE_URL }}
           IMAGE_GEN_MODEL: ${{ secrets.IMAGE_GEN_MODEL }}
@@ -77,17 +100,100 @@ jobs:
             done
           fi
 
-          spq run \
-            -p ${{ inputs.provider }} \
-            -m ${{ inputs.mode }} \
-            $TASK_ARGS \
-            -o results/report-${{ inputs.provider }}-${{ inputs.mode }}.json \
-            -v
+          MODE_ARGS=""
+          if [ -n "${{ inputs.mode }}" ]; then
+            MODE_ARGS="-m ${{ inputs.mode }}"
+          fi
 
-      - name: Upload results
+          spq run \
+            -j ${{ inputs.concurrency || '1' }} \
+            $MODE_ARGS \
+            $TASK_ARGS \
+            -o results/
+
+      # ── Build PR body from generated reports ──
+      - name: Build PR body
+        id: pr_body
+        run: |
+          BODY_FILE=$(mktemp)
+          SOURCE_BRANCH="${GITHUB_REF_NAME}"
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          cat > "$BODY_FILE" <<HEADER
+          ## Evaluation Results
+
+          - **Branch**: \`${SOURCE_BRANCH}\`
+          - **Triggered by**: ${GITHUB_ACTOR}
+          - **Triggered at**: ${TIMESTAMP}
+          - **Tasks input**: ${TASKS_INPUT:-all}
+          - **Concurrency**: ${CONCURRENCY_INPUT:-1}
+
+          HEADER
+
+          # Append each model's report.md
+          for report_md in $(find results/ -name "report.md" -type f | sort); do
+            model_dir=$(dirname "$report_md")
+            model_label=$(echo "$model_dir" | sed 's|results/||')
+            echo "### ${model_label}" >> "$BODY_FILE"
+            echo "" >> "$BODY_FILE"
+            echo "<details><summary>Full Report</summary>" >> "$BODY_FILE"
+            echo "" >> "$BODY_FILE"
+            cat "$report_md" >> "$BODY_FILE"
+            echo "" >> "$BODY_FILE"
+            echo "</details>" >> "$BODY_FILE"
+            echo "" >> "$BODY_FILE"
+          done
+
+          # Append comparison report if exists
+          COMPARISON=$(find results/ -maxdepth 1 -name "eval_*-models.md" -type f | head -1)
+          if [ -n "$COMPARISON" ]; then
+            echo "---" >> "$BODY_FILE"
+            echo "## Cross-Model Comparison" >> "$BODY_FILE"
+            echo "" >> "$BODY_FILE"
+            cat "$COMPARISON" >> "$BODY_FILE"
+          fi
+
+          echo "body_file=$BODY_FILE" >> "$GITHUB_OUTPUT"
+        env:
+          TASKS_INPUT: ${{ inputs.tasks }}
+          CONCURRENCY_INPUT: ${{ inputs.concurrency }}
+
+      # ── Commit results to a new branch & create PR ──
+      - name: Commit results and create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SOURCE_BRANCH="${GITHUB_REF_NAME}"
+          TS=$(date -u '+%Y%m%d-%H%M%S')
+          RESULTS_BRANCH="${SOURCE_BRANCH}-results-${TS}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "${RESULTS_BRANCH}"
+          git add -f results/
+          git commit -m "eval: add evaluation results (${TS})"
+          git push origin "${RESULTS_BRANCH}"
+
+          # Count models evaluated
+          MODEL_COUNT=$(find results/ -name "report.json" -type f | wc -l)
+          PR_TITLE="eval: ${SOURCE_BRANCH} — ${MODEL_COUNT} model(s) @ ${TS}"
+
+          gh pr create \
+            --base "${SOURCE_BRANCH}" \
+            --head "${RESULTS_BRANCH}" \
+            --title "${PR_TITLE}" \
+            --body-file "${{ steps.pr_body.outputs.body_file }}"
+
+          echo "## PR Created" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          PR_URL=$(gh pr view "${RESULTS_BRANCH}" --json url -q '.url')
+          echo "PR: ${PR_URL}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload results artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: eval-results-${{ inputs.provider }}-${{ inputs.mode }}
+          name: eval-results-${{ github.ref_name }}-${{ github.run_id }}
           path: results/
           retention-days: 30

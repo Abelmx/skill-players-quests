@@ -362,6 +362,49 @@ def run(
         console.print(f"\n[bold]Comparison report[/bold] → {comparison_path}")
 
 
+@cli.command("show-config")
+@click.option("--config", "-c", type=click.Path(exists=True), default=None)
+def show_config(config: str | None) -> None:
+    """Display current evaluation configuration (providers, models, env status)."""
+    import os
+
+    project_root = _resolve_project_root()
+    cfg = load_config(Path(config) if config else project_root / "configs" / "default.yaml")
+
+    console.print("\n[bold]Framework Settings[/bold]")
+    settings = Table(show_header=False, box=None, padding=(0, 2))
+    settings.add_column("Key", style="dim")
+    settings.add_column("Value")
+    settings.add_row("activation_mode", cfg.activation_mode.value)
+    settings.add_row("max_turns", str(cfg.max_turns))
+    settings.add_row("bash_timeout", f"{cfg.bash_timeout}s")
+    settings.add_row("skills_dir", cfg.skills_dir)
+    settings.add_row("tasks_dir", cfg.tasks_dir)
+    console.print(settings)
+
+    console.print("\n[bold]Providers & Models[/bold]")
+    pt = Table(show_lines=True)
+    pt.add_column("Provider", style="cyan")
+    pt.add_column("Base URL", style="dim", max_width=50)
+    pt.add_column("API Key Env", style="yellow")
+    pt.add_column("Key Status")
+    pt.add_column("Models", style="green")
+
+    total_models = 0
+    for name, pcfg in cfg.providers.items():
+        key_val = os.environ.get(pcfg.api_key_env)
+        if key_val:
+            key_status = "[green]set[/green]"
+        else:
+            key_status = "[red]not set[/red]"
+        models_str = "\n".join(pcfg.models) if pcfg.models else "[dim]none[/dim]"
+        total_models += len(pcfg.models)
+        pt.add_row(name, pcfg.base_url or "-", pcfg.api_key_env, key_status, models_str)
+
+    console.print(pt)
+    console.print(f"\n  {len(cfg.providers)} provider(s), {total_models} model(s) total\n")
+
+
 @cli.command("list-tasks")
 @click.option("--config", "-c", type=click.Path(exists=True), default=None)
 def list_tasks(config: str | None) -> None:
