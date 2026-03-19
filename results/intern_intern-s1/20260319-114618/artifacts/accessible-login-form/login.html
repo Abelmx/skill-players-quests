@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 2rem;
+            border: 2px solid #000000;
+            border-radius: 8px;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #000000;
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.3);
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>用户登录</h1>
+        <form action="/login" method="post" novalidate>
+            <div class="form-group">
+                <label for="username">用户名：</label>
+                <input type="text" id="username" name="username" required
+                       aria-describedby="username-help">
+                <div id="username-help" class="help-text">请输入您的用户名</div>
+            </div>
+            <div class="form-group">
+                <label for="password">密码：</label>
+                <input type="password" id="password" name="password" required
+                       aria-describedby="password-help">
+                <div id="password-help" class="help-text">请输入您的密码</div>
+            </div>
+            <button type="submit">登录</button>
+        </form>
+    </div>
+</body>
+</html>

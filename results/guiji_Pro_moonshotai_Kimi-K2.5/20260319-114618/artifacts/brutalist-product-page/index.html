@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRUTALIST PRODUCT // 极简工业风产品</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Custom Properties - Brutalist Color Palette */
+        :root {
+            --color-bg: #F5F5F0;
+            --color-black: #0A0A0A;
+            --color-white: #FFFFFF;
+            --color-accent: #FF3B30;
+            --color-secondary: #0066FF;
+            --color-border: #0A0A0A;
+            --spacing-unit: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: var(--color-bg);
+            color: var(--color-black);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Top Marquee Bar */
+        .marquee-bar {
+            background: var(--color-black);
+            color: var(--color-white);
+            padding: 12px 0;
+            overflow: hidden;
+            border-bottom: 4px solid var(--color-border);
+        }
+
+        .marquee-content {
+            display: flex;
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+        }
+
+        .marquee-content span {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0 40px;
+            letter-spacing: 2px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 40px;
+            border-bottom: 4px solid var(--color-border);
+            background: var(--color-white);
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .logo span {
+            color: var(--color-accent);
+        }
+
+        .nav-indicator {
+            font-size: 12px;
+            border: 2px solid var(--color-black);
+            padding: 8px 16px;
+            font-weight: 700;
+            animation: flash 2s ease-in-out infinite;
+        }
+
+        /* Main Container - Asymmetric Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Left Column - Product Image */
+        .product-image-section {
+            background: var(--color-black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image-section::before {
+            content: '[ PRODUCT_IMG_01 ]';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--color-white);
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            max-width: 480px;
+            aspect-ratio: 1;
+            background: var(--color-white);
+            border: 8px solid var(--color-accent);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .image-placeholder:hover {
+            transform: translate(-8px, -8px);
+            box-shadow: 16px 16px 0 var(--color-secondary);
+        }
+
+        .placeholder-icon {
+            font-size: 120px;
+            color: var(--color-black);
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+        }
+
+        .placeholder-text {
+            font-size: 14px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--color-black);
+        }
+
+        .image-grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255,59,48,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,59,48,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        /* Right Column - Product Info */
+        .product-info-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px;
+            background: var(--color-bg);
+            position: relative;
+        }
+
+        .product-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--color-secondary);
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: inline-block;
+            border: 2px solid var(--color-secondary);
+            padding: 8px 16px;
+        }
+
+        .product-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 0.95;
+            text-transform: uppercase;
+            letter-spacing: -4px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .product-title::after {
+            content: '';
+            display: block;
+            width: 120px;
+            height: 8px;
+            background: var(--color-accent);
+            margin-top: 24px;
+        }
+
+        .product-description {
+            font-size: 16px;
+            line-height: 1.8;
+            max-width: 440px;
+            margin-bottom: 40px;
+            padding-left: 24px;
+            border-left: 4px solid var(--color-black);
+        }
+
+        .specs-list {
+            list-style: none;
+            margin-bottom: 48px;
+        }
+
+        .specs-list li {
+            font-size: 14px;
+            padding: 12px 0;
+            border-bottom: 2px solid var(--color-black);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .specs-list li:first-child {
+            border-top: 2px solid var(--color-black);
+        }
+
+        .spec-label {
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Price & CTA Section */
+        .purchase-section {
+            background: var(--color-white);
+            border: 4px solid var(--color-black);
+            padding: 32px;
+            position: relative;
+        }
+
+        .purchase-section::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: -8px;
+            bottom: -8px;
+            background: var(--color-black);
+            z-index: -1;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .price {
+            font-family: 'Syne', sans-serif;
+            font-size: 64px;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+
+        .price-currency {
+            font-size: 24px;
+            font-weight: 400;
+        }
+
+        .price-note {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--color-secondary);
+        }
+
+        .buy-button {
+            width: 100%;
+            padding: 24px;
+            font-family: 'Space Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: var(--color-accent);
+            color: var(--color-white);
+            border: 4px solid var(--color-black);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .buy-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--color-black);
+            transition: left 0.3s ease;
+            z-index: 0;
+        }
+
+        .buy-button:hover::before {
+            left: 0;
+        }
+
+        .buy-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .buy-button:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0 var(--color-secondary);
+        }
+
+        .buy-button:active {
+            transform: translate(0, 0);
+            box-shadow: none;
+        }
+
+        .stock-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stock-dot {
+            width: 12px;
+            height: 12px;
+            background: #00C853;
+            border: 2px solid var(--color-black);
+            animation: flash 1.5s ease-in-out infinite;
+        }
+
+        /* Side Elements */
+        .side-tag {
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            color: var(--color-black);
+            opacity: 0.3;
+        }
+
+        .corner-element {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--color-black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            animation: rotate 10s linear infinite;
+        }
+
+        /* Footer Bar */
+        .footer-bar {
+            background: var(--color-black);
+            color: var(--color-white);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .product-title {
+                font-size: 48px;
+            }
+
+            .price {
+                font-size: 48px;
+            }
+
+            .side-tag {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .product-image-section,
+            .product-info-section {
+                padding: 40px 20px;
+            }
+
+            .product-title {
+                font-size: 36px;
+                letter-spacing: -2px;
+            }
+
+            .price {
+                font-size: 36px;
+            }
+
+            .footer-bar {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+        }
+
+        /* Focus Styles for Accessibility */
+        button:focus-visible,
+        a:focus-visible {
+            outline: 4px solid var(--color-secondary);
+            outline-offset: 4px;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Marquee Bar -->
+    <div class="marquee-bar" role="banner">
+        <div class="marquee-content" aria-hidden="true">
+            <span>/// BRUTALIST INDUSTRIAL DESIGN /// LIMITED EDITION /// FREE SHIPPING WORLDWIDE ///</span>
+            <span>/// BRUTALIST INDUSTRIAL DESIGN /// LIMITED EDITION /// FREE SHIPPING WORLDWIDE ///</span>
+            <span>/// BRUTALIST INDUSTRIAL DESIGN /// LIMITED EDITION /// FREE SHIPPING WORLDWIDE ///</span>
+            <span>/// BRUTALIST INDUSTRIAL DESIGN /// LIMITED EDITION /// FREE SHIPPING WORLDWIDE ///</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">BRUTAL<span>.</span>CO</div>
+        <div class="nav-indicator">PRODUCT_01 // V.2.0</div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Left: Product Image Section -->
+        <section class="product-image-section" aria-label="产品图片">
+            <div class="image-grid-overlay"></div>
+            <div class="image-placeholder">
+                <div class="placeholder-icon">□</div>
+                <div class="placeholder-text">IMG_PLACEHOLDER</div>
+            </div>
+        </section>
+
+        <!-- Right: Product Info Section -->
+        <section class="product-info-section" aria-label="产品信息">
+            <div class="side-tag">RAW // INDUSTRIAL // BOLD</div>
+            
+            <div>
+                <span class="product-label">NEW_RELEASE_2024</span>
+                <h1 class="product-title">CONCRETE<br>CHRONO<br>UNIT</h1>
+                
+                <p class="product-description">
+                    原始混凝土美学与精密工程工艺的完美融合。每一件产品都经过手工浇筑，呈现独特的纹理与质感。无修饰、无妥协——纯粹的功能主义宣言。
+                </p>
+
+                <ul class="specs-list">
+                    <li>
+                        <span class="spec-label">Material // 材质</span>
+                        <span>Raw Concrete / Steel</span>
+                    </li>
+                    <li>
+                        <span class="spec-label">Dimensions // 尺寸</span>
+                        <span>240 × 240 × 120 mm</span>
+                    </li>
+                    <li>
+                        <span class="spec-label">Weight // 重量</span>
+                        <span>2.8 kg</span>
+                    </li>
+                    <li>
+                        <span class="spec-label">Origin // 产地</span>
+                        <span>Handcrafted in Berlin</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="purchase-section">
+                <div class="price-container">
+                    <span class="price">2,480<span class="price-currency">CNY</span></span>
+                </div>
+                <div class="price-note">Free Global Shipping // 全球免费配送</div>
+                
+                <button class="buy-button" aria-label="立即购买 Concrete Chrono Unit">
+                    <span>[ ADD_TO_CART ]</span>
+                </button>
+                
+                <div class="stock-indicator">
+                    <div class="stock-dot" aria-hidden="true"></div>
+                    <span>In Stock // 现货供应 (14 units left)</span>
+                </div>
+            </div>
+
+            <div class="corner-element" aria-hidden="true">↻</div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-bar">
+        <span>© 2024 BRUTAL.CO</span>
+        <span>DESIGNED WITHOUT COMPROMISE</span>
+        <span>ID: #BX-2024-001</span>
+    </footer>
+</body>
+</html>

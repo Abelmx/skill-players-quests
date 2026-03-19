@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRUTALIST PRODUCT</title>
+    <style>
+        /* BRUTALIST DESIGN SYSTEM */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f4f4f4;
+            color: #111;
+            line-height: 1.4;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            background: #fff;
+            border: 8px solid #000;
+            box-shadow: none;
+        }
+
+        .product-header {
+            text-align: left;
+            margin-bottom: 60px;
+            padding: 40px 0;
+            border-bottom: 2px solid #000;
+        }
+
+        .product-title {
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .product-subtitle {
+            font-size: 18px;
+            font-weight: 300;
+            color: #666;
+            max-width: 600px;
+        }
+
+        .product-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        .product-image-placeholder {
+            background: #e0e0e0;
+            border: 4px solid #000;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .product-info {
+            padding: 40px 0;
+        }
+
+        .price-section {
+            margin-bottom: 50px;
+        }
+
+        .price-label {
+            font-size: 16px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .price-amount {
+            font-size: 64px;
+            font-weight: 900;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: -3px;
+            margin-bottom: 10px;
+        }
+
+        .original-price {
+            font-size: 24px;
+            text-decoration: line-through;
+            color: #999;
+            opacity: 0.6;
+        }
+
+        .buy-button {
+            background: #000;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 24px 48px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            border: 4px solid #000;
+            margin-bottom: 30px;
+        }
+
+        .buy-button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .features li:last-child {
+            border-bottom: none;
+        }
+
+        .features strong {
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .product-main {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .product-title {
+                font-size: 36px;
+            }
+
+            .price-amount {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="product-header">
+            <h1 class="product-title">BRUTALIST CONSOLE</h1>
+            <p class="product-subtitle">Unapologetic design for the uncompromising user</p>
+        </div>
+
+        <div class="product-main">
+            <div class="product-image">
+                <div class="product-image-placeholder">
+                    PRODUCT IMAGE<br>
+                    <span style="font-size: 14px; color: #999; margin-top: 10px;">400×400px</span>
+                </div>
+            </div>
+
+            <div class="product-info">
+                <div class="price-section">
+                    <div class="price-label">SPECIAL PRICE</div>
+                    <div class="price-amount">¥2,999</div>
+                    <div class="original-price">¥3,999</div>
+                </div>
+
+                <button class="buy-button">BUY NOW</button>
+
+                <ul class="features">
+                    <li><strong>UNFINISHED CONCRETE</strong> - Raw aesthetic with intentional imperfections</li>
+                    <li><strong>4K DISPLAY</strong> - High resolution for brutal clarity</li>
+                    <li><strong>1TB STORAGE</strong> - Uncompromising capacity</li>
+                    <li><strong>DIRECT CONNECTION</strong> - No cloud, no compromises</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

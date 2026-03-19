@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 无障碍登录表单</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS 自定义属性 */
+        :root {
+            --color-bg: #0a0a0f;
+            --color-surface: #15151e;
+            --color-surface-light: #1f1f2e;
+            --color-primary: #3b82f6;
+            --color-primary-hover: #2563eb;
+            --color-primary-focus: #60a5fa;
+            --color-text: #f8fafc;
+            --color-text-muted: #94a3b8;
+            --color-border: #334155;
+            --color-border-focus: #60a5fa;
+            --color-error: #ef4444;
+            --color-success: #22c55e;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Space Mono', monospace;
+            --transition-fast: 150ms ease;
+            --transition-medium: 300ms ease;
+        }
+
+        /* 重置与基础样式 */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰元素 */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.08;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-circle-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--color-primary);
+            top: 10%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-circle-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--color-primary);
+            top: 50%;
+            right: 30%;
+            animation-delay: -7s;
+        }
+
+        .bg-circle-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--color-primary);
+            bottom: 15%;
+            right: 15%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* 布局容器 - 非居中不对称布局 */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 左侧欢迎区域 */
+        .welcome-section {
+            padding-right: 2rem;
+        }
+
+        .welcome-badge {
+            display: inline-block;
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .welcome-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--color-text);
+        }
+
+        .welcome-title span {
+            color: var(--color-primary);
+        }
+
+        .welcome-text {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+            max-width: 400px;
+        }
+
+        /* 特性列表 */
+        .features {
+            margin-top: 2rem;
+            list-style: none;
+        }
+
+        .features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+        }
+
+        .features li::before {
+            content: "→";
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+
+        /* 登录表单区域 - 错位重叠设计 */
+        .form-section {
+            position: relative;
+        }
+
+        .form-container {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            padding: 3rem;
+            position: relative;
+            transform: translateX(20px);
+            transition: transform var(--transition-medium);
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: -15px;
+            right: 15px;
+            bottom: -15px;
+            background: var(--color-surface-light);
+            border: 1px solid var(--color-border);
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* 表单组 */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        /* 标签样式 */
+        .form-label {
+            display: block;
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+            transition: color var(--transition-fast);
+        }
+
+        /* 输入框基础样式 */
+        .form-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: 4px;
+            color: var(--color-text);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+        }
+
+        .form-input:hover {
+            border-color: var(--color-primary-focus);
+        }
+
+        /* Focus 样式 - WCAG 2.1 AA 要求 */
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-input:focus + .form-label,
+        .form-group:focus-within .form-label {
+            color: var(--color-primary);
+        }
+
+        /* 输入框图标 */
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            bottom: 1rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition-fast);
+            pointer-events: none;
+        }
+
+        .form-input:focus ~ .input-icon {
+            color: var(--color-primary);
+        }
+
+        /* 密码切换按钮 */
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            bottom: 0.85rem;
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color var(--transition-fast);
+        }
+
+        .password-toggle:hover {
+            color: var(--color-text);
+        }
+
+        .password-toggle:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* 辅助功能选项 */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--color-primary);
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        .checkbox-label {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--color-primary);
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .forgot-link:hover {
+            color: var(--color-primary-focus);
+            text-decoration: underline;
+        }
+
+        .forgot-link:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* 登录按钮 */
+        .login-button {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--color-primary);
+            border: 2px solid var(--color-primary);
+            color: white;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-fast);
+        }
+
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .login-button:hover::before {
+            left: 100%;
+        }
+
+        .login-button:hover {
+            background: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .login-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        /* 注册链接 */
+        .signup-prompt {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+        }
+
+        .signup-link {
+            color: var(--color-primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .signup-link:hover {
+            color: var(--color-primary-focus);
+            text-decoration: underline;
+        }
+
+        .signup-link:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* 错误提示 */
+        .error-message {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+        }
+
+        .error-message[role="alert"] {
+            display: flex;
+        }
+
+        /* 无障碍声明 */
+        .a11y-info {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            padding: 0.75rem 1rem;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .a11y-badge {
+            background: var(--color-primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            font-weight: bold;
+            font-size: 0.625rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* 跳转到主要内容链接 */
+        .skip-link {
+            position: absolute;
+            top: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-primary);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            z-index: 100;
+            transition: top var(--transition-fast);
+        }
+
+        .skip-link:focus {
+            top: 1rem;
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .welcome-section {
+                text-align: center;
+                padding-right: 0;
+            }
+
+            .welcome-text {
+                max-width: 100%;
+            }
+
+            .features {
+                display: inline-block;
+                text-align: left;
+            }
+
+            .form-container {
+                transform: none;
+                padding: 2rem;
+            }
+
+            .form-container::before {
+                display: none;
+            }
+
+            .bg-decoration {
+                width: 100%;
+                opacity: 0.3;
+            }
+        }
+
+        /* 高对比度模式支持 */
+        @media (prefers-contrast: high) {
+            :root {
+                --color-bg: #000000;
+                --color-text: #ffffff;
+                --color-primary: #ffffff;
+                --color-border: #ffffff;
+            }
+        }
+
+        /* 减少动画偏好 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            .bg-decoration,
+            .a11y-info {
+                display: none;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .form-container {
+                border: 2px solid black;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 跳转到主要内容链接 - 无障碍功能 -->
+    <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+    <!-- 背景装饰 -->
+    <div class="bg-decoration" aria-hidden="true">
+        <div class="bg-circle bg-circle-1"></div>
+        <div class="bg-circle bg-circle-2"></div>
+        <div class="bg-circle bg-circle-3"></div>
+    </div>
+
+    <main class="container" id="main-content" role="main">
+        <!-- 左侧欢迎区域 -->
+        <section class="welcome-section" aria-labelledby="welcome-heading">
+            <span class="welcome-badge">WCAG 2.1 AA 认证</span>
+            <h1 id="welcome-heading" class="welcome-title">
+                欢迎<br><span>回来</span>
+            </h1>
+            <p class="welcome-text">
+                这是一个完全无障碍的登录系统，遵循 WCAG 2.1 AA 标准设计。
+                支持键盘导航、屏幕阅读器和多种辅助技术。
+            </p>
+            <ul class="features">
+                <li>完全键盘可访问</li>
+                <li>高对比度设计</li>
+                <li>屏幕阅读器友好</li>
+                <li>减少动画支持</li>
+            </ul>
+        </section>
+
+        <!-- 登录表单区域 -->
+        <section class="form-section" aria-labelledby="login-heading">
+            <div class="form-container">
+                <header class="form-header">
+                    <h2 id="login-heading" class="form-title">登录账户</h2>
+                    <p class="form-subtitle">请输入您的登录信息</p>
+                </header>
+
+                <!-- 错误提示区域 -->
+                <div 
+                    id="error-message" 
+                    class="error-message" 
+                    role="alert" 
+                    aria-live="polite"
+                    aria-atomic="true"
+                    style="display: none;"
+                >
+                    <span aria-hidden="true">⚠</span>
+                    <span id="error-text"></span>
+                </div>
+
+                <form 
+                    id="login-form" 
+                    action="/login" 
+                    method="POST" 
+                    novalidate
+                    autocomplete="on"
+                >
+                    <!-- 用户名/邮箱输入 -->
+                    <div class="form-group">
+                        <label for="username" class="form-label">
+                            用户名或邮箱地址
+                            <span aria-label="必填">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username"
+                            class="form-input" 
+                            required
+                            aria-required="true"
+                            autocomplete="username"
+                            autocapitalize="off"
+                            autocorrect="off"
+                            spellcheck="false"
+                            placeholder="请输入用户名或邮箱"
+                            aria-describedby="username-help"
+                        >
+                        <span class="input-icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                        <span id="username-help" class="visually-hidden">
+                            输入您注册时使用的用户名或电子邮件地址
+                        </span>
+                    </div>
+
+                    <!-- 密码输入 -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            密码
+                            <span aria-label="必填">*</span>
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password"
+                            class="form-input" 
+                            required
+                            aria-required="true"
+                            autocomplete="current-password"
+                            placeholder="请输入密码"
+                            aria-describedby="password-help"
+                            minlength="8"
+                        >
+                        <span class="input-icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </span>
+                        <button 
+                            type="button" 
+                            class="password-toggle" 
+                            id="toggle-password"
+                            aria-label="显示密码"
+                            aria-pressed="false"
+                            aria-controls="password"
+                        >
+                            <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg id="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                        <span id="password-help" class="visually-hidden">
+                            密码至少需要8个字符
+                        </span>
+                    </div>
+
+                    <!-- 辅助功能选项 -->
+                    <div class="form-options">
+                        <label class="checkbox-wrapper">
+                            <input 
+                                type="checkbox" 
+                                id="remember" 
+                                name="remember"
+                            >
+                            <span class="checkbox-label">记住我</span>
+                        </label>
+                        <a href="/forgot-password" class="forgot-link">
+                            忘记密码？
+                        </a>
+                    </div>
+
+                    <!-- 登录按钮 -->
+                    <button 
+                        type="submit" 
+                        class="login-button"
+                        id="submit-btn"
+                    >
+                        <span>登录</span>
+                    </button>
+                </form>
+
+                <p class="signup-prompt">
+                    还没有账户？
+                    <a href="/signup" class="signup-link">立即注册</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- 无障碍声明 -->
+    <aside class="a11y-info" aria-label="无障碍信息">
+        <span class="a11y-badge">AA</span>
+        <span>本页面符合 WCAG 2.1 AA 标准</span>
+    </aside>
+
+    <!-- 隐藏文本 - 仅屏幕阅读器可见 -->
+    <style>
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+
+    <script>
+        // 密码显示/隐藏切换
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        const eyeOffIcon = document.getElementById('eye-off-icon');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // 更新 ARIA 状态
+            const isPressed = type === 'text';
+            this.setAttribute('aria-pressed', isPressed);
+            this.setAttribute('aria-label', isPressed ? '隐藏密码' : '显示密码');
+            
+            // 切换图标
+            eyeIcon.style.display = isPressed ? 'none' : 'block';
+            eyeOffIcon.style.display = isPressed ? 'block' : 'none';
+        });
+
+        // 表单验证
+        const form = document.getElementById('login-form');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const usernameInput = document.getElementById('username');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let errors = [];
+            
+            // 验证用户名
+            if (!usernameInput.value.trim()) {
+                errors.push('请输入用户名或邮箱地址');
+                usernameInput.setAttribute('aria-invalid', 'true');
+            } else {
+                usernameInput.removeAttribute('aria-invalid');
+            }
+            
+            // 验证密码
+            if (!passwordInput.value) {
+                errors.push('请输入密码');
+                passwordInput.setAttribute('aria-invalid', 'true');
+            } else if (passwordInput.value.length < 8) {
+                errors.push('密码至少需要8个字符');
+                passwordInput.setAttribute('aria-invalid', 'true');
+            } else {
+                passwordInput.removeAttribute('aria-invalid');
+            }
+            
+            // 显示错误
+            if (errors.length > 0) {
+                errorText.textContent = errors.join('；');
+                errorMessage.style.display = 'flex';
+                errorMessage.setAttribute('role', 'alert');
+                
+                // 聚焦到第一个错误字段
+                if (!usernameInput.value.trim()) {
+                    usernameInput.focus();
+                } else {
+                    passwordInput.focus();
+                }
+            } else {
+                // 模拟登录成功
+                errorMessage.style.display = 'none';
+                alert('登录成功！（这是演示）');
+            }
+        });
+
+        // 输入时清除错误状态
+        [usernameInput, passwordInput].forEach(input => {
+            input.addEventListener('input', function() {
+                this.removeAttribute('aria-invalid');
+                if (errorMessage.style.display === 'flex') {
+                    errorMessage.style.display = 'none';
+                }
+            });
+        });
+
+        // 键盘导航增强
+        document.addEventListener('keydown', function(e) {
+            // Escape 键关闭错误消息
+            if (e.key === 'Escape' && errorMessage.style.display === 'flex') {
+                errorMessage.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

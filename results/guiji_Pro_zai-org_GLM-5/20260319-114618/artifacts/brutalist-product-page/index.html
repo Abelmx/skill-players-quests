@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRUTALIST PRODUCT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #000000;
+            --white: #ffffff;
+            --yellow: #ffff00;
+            --red: #ff0000;
+            --gray: #e0e0e0;
+            --dark-gray: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: var(--gray);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* HEADER - Raw brutalist navigation */
+        .header {
+            border: 4px solid var(--black);
+            background: var(--white);
+            padding: 15px 20px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transform: rotate(-0.5deg);
+            animation: slideIn 0.8s ease-out;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            border-right: 4px solid var(--black);
+            padding-right: 20px;
+        }
+
+        .nav-link {
+            color: var(--black);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px 20px;
+            border: 3px solid var(--black);
+            background: var(--yellow);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .nav-link:hover {
+            background: var(--red);
+            color: var(--white);
+            transform: skewX(-10deg);
+        }
+
+        .nav-link:focus {
+            outline: 4px solid var(--yellow);
+            outline-offset: 2px;
+        }
+
+        /* MAIN PRODUCT SECTION - Asymmetric grid */
+        .product-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .product-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* IMAGE PLACEHOLDER - Raw brutal frames */
+        .image-container {
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 500px;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    var(--dark-gray),
+                    var(--dark-gray) 10px,
+                    var(--gray) 10px,
+                    var(--gray) 20px
+                );
+            border: 6px solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transform: translate(-20px, 20px);
+        }
+
+        .image-placeholder::before {
+            content: '[ PRODUCT IMAGE ]';
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--white);
+            background: var(--black);
+            padding: 20px 30px;
+            border: 4px solid var(--white);
+        }
+
+        .image-label {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: var(--red);
+            color: var(--white);
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 3px solid var(--black);
+            letter-spacing: 2px;
+        }
+
+        /* PRODUCT INFO - Breaking the grid */
+        .product-info {
+            position: relative;
+            z-index: 2;
+            padding-left: 40px;
+            animation: slideRight 0.8s ease-out 0.5s both;
+        }
+
+        .product-title {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: -4px;
+            text-transform: uppercase;
+            color: var(--black);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .product-title::after {
+            content: 'NEW';
+            position: absolute;
+            top: -20px;
+            right: 0;
+            font-size: 14px;
+            background: var(--yellow);
+            padding: 5px 15px;
+            border: 3px solid var(--black);
+            animation: blink 2s infinite;
+        }
+
+        .product-description {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--dark-gray);
+            max-width: 400px;
+            margin-bottom: 40px;
+            border-left: 6px solid var(--black);
+            padding-left: 20px;
+        }
+
+        /* PRICE - Bold brutal numbers */
+        .price-container {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .price-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: clamp(60px, 12vw, 120px);
+            font-weight: 700;
+            letter-spacing: -5px;
+            color: var(--black);
+            display: inline-block;
+            position: relative;
+        }
+
+        .price::before {
+            content: '¥';
+            font-size: 0.4em;
+            vertical-align: super;
+            margin-right: 5px;
+        }
+
+        .original-price {
+            font-size: 20px;
+            color: var(--red);
+            text-decoration: line-through;
+            margin-left: 20px;
+            position: absolute;
+            top: 50%;
+        }
+
+        /* BUY BUTTON - Aggressive brutal CTA */
+        .buy-button {
+            display: inline-block;
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 25px 60px;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .buy-button::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: -8px;
+            bottom: -8px;
+            background: var(--yellow);
+            z-index: -1;
+            transition: all 0.15s ease;
+        }
+
+        .buy-button:hover {
+            transform: translate(-8px, -8px);
+        }
+
+        .buy-button:hover::before {
+            transform: translate(8px, 8px);
+        }
+
+        .buy-button:focus {
+            outline: 4px solid var(--red);
+            outline-offset: 8px;
+        }
+
+        .buy-button:active {
+            transform: translate(0, 0);
+            background: var(--red);
+        }
+
+        .buy-button:active::before {
+            transform: translate(0, 0);
+        }
+
+        /* SPECS - Raw data display */
+        .specs {
+            margin-top: 50px;
+            border-top: 4px solid var(--black);
+            padding-top: 30px;
+        }
+
+        .specs-title {
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            background: var(--black);
+            color: var(--white);
+            display: inline-block;
+            padding: 5px 15px;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .spec-item {
+            border: 3px solid var(--black);
+            padding: 15px;
+            background: var(--white);
+            transition: transform 0.2s ease;
+        }
+
+        .spec-item:hover {
+            transform: skewX(-5deg);
+            background: var(--yellow);
+        }
+
+        .spec-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+
+        .spec-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* ANIMATIONS */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-100px) rotate(-0.5deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) rotate(-0.5deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% {
+                opacity: 1;
+            }
+            25%, 75% {
+                opacity: 0.5;
+            }
+        }
+
+        /* FOOTER - Raw brutal bottom */
+        .footer {
+            margin-top: 80px;
+            border: 4px solid var(--black);
+            background: var(--black);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transform: rotate(0.3deg);
+        }
+
+        /* Decorative elements */
+        .sticker {
+            position: fixed;
+            top: 20%;
+            right: 5%;
+            background: var(--red);
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 700;
+            padding: 15px 25px;
+            border: 4px solid var(--black);
+            transform: rotate(15deg);
+            z-index: 100;
+            animation: bounce 3s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: rotate(15deg) translateY(0);
+            }
+            50% {
+                transform: rotate(15deg) translateY(-10px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sticker" aria-hidden="true">HOT!</div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">BRAND</div>
+            <nav>
+                <a href="#" class="nav-link" aria-label="购物车">购物车 [ 0 ]</a>
+            </nav>
+        </header>
+
+        <!-- Main Product Section -->
+        <main>
+            <section class="product-section" aria-labelledby="product-title">
+                <!-- Image -->
+                <div class="image-container">
+                    <span class="image-label">限量发售</span>
+                    <div class="image-placeholder" role="img" aria-label="产品图片占位区"></div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="product-info">
+                    <h1 id="product-title" class="product-title">BRUTAL<br>PRODUCT</h1>
+                    
+                    <p class="product-description">
+                        这是一款融合了原始美学与现代工艺的产品。不妥协的设计语言，极致的功能体验。每一个细节都在诉说着反叛与真实。
+                    </p>
+
+                    <!-- Price -->
+                    <div class="price-container">
+                        <div class="price-label">限时特惠价格</div>
+                        <span class="price">2,999</span>
+                        <span class="original-price">¥4,999</span>
+                    </div>
+
+                    <!-- Buy Button -->
+                    <button class="buy-button" type="button" aria-label="立即购买产品">
+                        立即购买
+                    </button>
+
+                    <!-- Specs -->
+                    <div class="specs">
+                        <div class="specs-title">产品规格</div>
+                        <div class="spec-grid">
+                            <div class="spec-item">
+                                <div class="spec-label">材质</div>
+                                <div class="spec-value">金属+真皮</div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">重量</div>
+                                <div class="spec-value">1.2 KG</div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">尺寸</div>
+                                <div class="spec-value">30×20×5 CM</div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">保修</div>
+                                <div class="spec-value">3 年</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            © 2024 BRUTALIST BRAND — 所有权利保留 — 原始 · 真实 · 无妥协
+        </footer>
+    </div>
+</body>
+</html>

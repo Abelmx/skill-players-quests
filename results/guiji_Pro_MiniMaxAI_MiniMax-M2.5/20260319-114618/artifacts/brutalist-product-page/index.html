@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAW PRODUCT | Brutalist Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #f5f5f0;
+            --bg-dark: #0a0a0a;
+            --accent-yellow: #fff200;
+            --accent-red: #ff3300;
+            --text-primary: #0a0a0a;
+            --text-inverse: #f5f5f0;
+            --border-thick: 4px solid var(--text-primary);
+            --border-thin: 2px solid var(--text-primary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Brutalist Header */
+        .header {
+            background: var(--bg-dark);
+            color: var(--text-inverse);
+            padding: 1.5rem;
+            border-bottom: var(--border-thick);
+            position: relative;
+        }
+
+        .header::before {
+            content: "⚠️ PROTOTYPE";
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent-yellow);
+            color: var(--text-primary);
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 8vw, 5rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 0.9;
+        }
+
+        /* Main Layout - Asymmetric Grid */
+        .product-section {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            min-height: calc(100vh - 120px);
+            position: relative;
+        }
+
+        /* Image Area */
+        .image-area {
+            background: var(--text-primary);
+            border-right: var(--border-thick);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-area::after {
+            content: "IMG_001";
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: var(--bg-primary);
+            font-size: 3rem;
+            font-weight: 700;
+            opacity: 0.1;
+        }
+
+        .image-placeholder {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--text-primary),
+                var(--text-primary) 10px,
+                var(--bg-dark) 10px,
+                var(--bg-dark) 20px
+            );
+            position: relative;
+        }
+
+        .image-placeholder::before {
+            content: "📷";
+            font-size: 8rem;
+            filter: grayscale(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .image-placeholder:hover::before {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        /* Product Info Area */
+        .product-info {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        .product-info::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 20px,
+                var(--text-primary) 20px,
+                var(--text-primary) 21px
+            );
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent-red);
+            color: var(--text-inverse);
+            padding: 0.5rem 1rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            width: fit-content;
+            border: var(--border-thin);
+            box-shadow: 6px 6px 0 var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .badge:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 var(--text-primary);
+        }
+
+        .product-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1;
+            position: relative;
+        }
+
+        .product-title::after {
+            content: "";
+            display: block;
+            width: 60%;
+            height: 8px;
+            background: var(--accent-yellow);
+            margin-top: 1rem;
+            transition: width 0.5s ease;
+        }
+
+        .product-title:hover::after {
+            width: 100%;
+        }
+
+        .product-description {
+            font-size: 1rem;
+            line-height: 1.8;
+            max-width: 500px;
+            border-left: var(--border-thick);
+            padding-left: 1.5rem;
+        }
+
+        .product-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .price-tag {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+
+        .price-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .price-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--accent-red);
+            text-shadow: 3px 3px 0 var(--text-primary);
+        }
+
+        .buy-button {
+            background: var(--accent-yellow);
+            color: var(--text-primary);
+            border: var(--border-thick);
+            padding: 1.5rem 3rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 8px 8px 0 var(--text-primary);
+        }
+
+        .buy-button:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0 var(--text-primary);
+            background: var(--text-primary);
+            color: var(--accent-yellow);
+        }
+
+        .buy-button:active {
+            transform: translate(8px, 8px);
+            box-shadow: 0 0 0 var(--text-primary);
+        }
+
+        .buy-button:focus {
+            outline: 4px solid var(--accent-red);
+            outline-offset: 4px;
+        }
+
+        /* Decorative Elements */
+        .deco-box {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: var(--accent-yellow);
+            border: var(--border-thin);
+            z-index: 10;
+        }
+
+        .deco-box-1 {
+            top: -30px;
+            right: 30%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .deco-box-2 {
+            bottom: 20%;
+            left: -30px;
+            background: var(--accent-red);
+            animation: float 3s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-primary);
+            color: var(--text-inverse);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: var(--border-thick);
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .footer-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-yellow);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .product-section {
+                grid-template-columns: 1fr;
+            }
+
+            .image-area {
+                min-height: 300px;
+                border-right: none;
+                border-bottom: var(--border-thick);
+            }
+
+            .product-info {
+                padding: 2rem;
+            }
+
+            .deco-box {
+                display: none;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .price-value {
+                font-size: 2.5rem;
+            }
+
+            .buy-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Raw Product</h1>
+    </header>
+
+    <main class="product-section">
+        <div class="image-area">
+            <div class="image-placeholder" role="img" aria-label="产品图片占位区"></div>
+            <div class="deco-box deco-box-1"></div>
+            <div class="deco-box deco-box-2"></div>
+        </div>
+
+        <div class="product-info">
+            <span class="badge">New Arrival 2024</span>
+
+            <h2 class="product-title">Industrial Concrete Speaker</h2>
+
+            <p class="product-description">
+                Brutalist design meets audio excellence. Raw concrete housing with powerful 50mm drivers. 
+                Unapologetic aesthetics. Unmatched sound quality. This is not for everyone. It's for the bold.
+            </p>
+
+            <div class="product-meta">
+                <div class="price-tag">
+                    <span class="price-label">Price:</span>
+                    <span class="price-value">¥2,499</span>
+                </div>
+
+                <button class="buy-button" type="button" aria-label="立即购买工业混凝土音响">
+                    Buy Now →
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <span class="footer-text">© 2024 Raw Collective</span>
+        <span class="footer-number">001</span>
+    </footer>
+</body>
+</html>

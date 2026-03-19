@@ -1,0 +1,58 @@
+{
+  "total_tasks": 10,
+  "by_model": {
+    "boyue/gpt-5.4": {
+      "task_score": 1.0,
+      "skill_selection_score": 1.0,
+      "instruction_following_score": 1.0,
+      "overall_score": 1.0,
+      "total_tasks": 10,
+      "tasks_passed": 10
+    }
+  },
+  "by_category": {
+    "design-standards": {
+      "boyue/gpt-5.4": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    },
+    "external-api": {
+      "boyue/gpt-5.4": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    },
+    "realtime-data": {
+      "boyue/gpt-5.4": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    },
+    "service-interaction": {
+      "boyue/gpt-5.4": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    },
+    "specialized-tools": {
+      "boyue/gpt-5.4": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    }
+  },
+  "global_pass_rate": 1.0,
+  "global_skill_selection": 1.0,
+  "global_instruction_following": 1.0,
+  "global_efficiency": {
+    "avg_input_tokens": 6367.0,
+    "avg_output_tokens": 930.5,
+    "avg_turns": 3.9
+  }
+}

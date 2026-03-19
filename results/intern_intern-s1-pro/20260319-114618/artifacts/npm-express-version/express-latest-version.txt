@@ -1,0 +1,17 @@
+npm 包 express 最新版本信息
+============================
+
+版本号：5.2.1
+发布日期：2025年12月1日 20:49:43 UTC
+
+其他信息：
+- 包名：express
+- 描述：Fast, unopinionated, minimalist web framework（快速、无意见、极简的Web框架）
+- 许可证：MIT
+- 作者：TJ Holowaychuk
+- 主要维护者：wesleytodd, jonchurch, ctcpip, ulisesgascon, sheplu
+- GitHub仓库：https://github.com/expressjs/express
+- Node.js要求：>= 18
+- 官方网站：https://expressjs.com/
+
+下载地址：https://registry.npmjs.org/express/-/express-5.2.1.tgz

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 无障碍登录表单</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Color Palette - High Contrast for WCAG 2.1 AA */
+            --color-bg: #0d1117;
+            --color-surface: #161b22;
+            --color-surface-hover: #21262d;
+            --color-primary: #58a6ff;
+            --color-primary-hover: #79c0ff;
+            --color-text: #f0f6fc;
+            --color-text-secondary: #8b949e;
+            --color-border: #30363d;
+            --color-error: #f85149;
+            --color-focus: rgba(88, 166, 255, 0.4);
+            
+            /* Typography */
+            --font-heading: 'Syne', sans-serif;
+            --font-body: 'Space Mono', monospace;
+            
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+            background-image: 
+                radial-gradient(ellipse at 20% 80%, rgba(88, 166, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(136, 87, 229, 0.06) 0%, transparent 50%);
+        }
+
+        .login-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: var(--space-xl);
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Decorative side panel - asymmetric layout */
+        .login-aside {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-aside::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 150%;
+            height: 150%;
+            background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-primary) 100%);
+            opacity: 0.15;
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, -20px) rotate(5deg); }
+        }
+
+        .login-aside h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: var(--space-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-aside h1 span {
+            display: block;
+            background: linear-gradient(90deg, var(--color-primary), #a371f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-aside p {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Main form area */
+        .login-form-wrapper {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: var(--space-xl);
+            position: relative;
+            box-shadow: 
+                0 0 0 1px var(--color-border),
+                0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-form-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), #a371f7);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .form-header {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-header h2 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .form-header p {
+            color: var(--color-text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .form-group label .required {
+            color: var(--color-error);
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input::placeholder {
+            color: var(--color-text-secondary);
+            opacity: 0.7;
+        }
+
+        .form-group input:hover {
+            border-color: var(--color-text-secondary);
+        }
+
+        .form-group input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-focus);
+        }
+
+        .form-group input[aria-invalid="true"] {
+            border-color: var(--color-error);
+        }
+
+        .form-group input[aria-invalid="true"]:focus {
+            box-shadow: 0 0 0 3px rgba(248, 81, 73, 0.3);
+        }
+
+        .form-group .error-message {
+            color: var(--color-error);
+            font-size: 0.8rem;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .form-group input[aria-invalid="true"] + .error-message {
+            display: flex;
+        }
+
+        .submit-btn {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 700;
+            padding: var(--space-sm) var(--space-lg);
+            background: linear-gradient(135deg, var(--color-primary) 0%, #a371f7 100%);
+            color: var(--color-bg);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: var(--space-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--color-focus), 0 0 0 5px var(--color-primary);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .form-footer {
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+        }
+
+        .form-footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .form-footer a:hover {
+            color: var(--color-primary-hover);
+            text-decoration: underline;
+        }
+
+        .form-footer a:focus {
+            outline: 2px solid var(--color-focus);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-primary);
+            color: var(--color-bg);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: 0 0 8px 8px;
+            z-index: 1000;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+            }
+
+            .login-aside {
+                padding: var(--space-md);
+                text-align: center;
+            }
+
+            .login-aside::before {
+                right: -50%;
+            }
+
+            .login-form-wrapper {
+                padding: var(--space-lg);
+            }
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#login-form" class="skip-link">跳转到登录表单</a>
+    
+    <main class="login-container" role="main">
+        <aside class="login-aside" aria-hidden="true">
+            <h1>
+                <span>欢迎回来</span>
+                登录您的账户
+            </h1>
+            <p>安全、快捷、无障碍。使用屏幕阅读器或键盘导航时，我们确保您获得流畅的体验。</p>
+        </aside>
+
+        <div class="login-form-wrapper">
+            <div class="form-header">
+                <h2>账户登录</h2>
+                <p>请输入您的凭据以访问您的账户</p>
+            </div>
+
+            <form 
+                id="login-form" 
+                class="login-form" 
+                action="#" 
+                method="POST" 
+                role="form"
+                aria-labelledby="form-title"
+                novalidate
+            >
+                <div class="form-group">
+                    <label for="username">
+                        用户名
+                        <span class="required" aria-hidden="true">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        autocomplete="username"
+                        required
+                        aria-required="true"
+                        aria-describedby="username-hint"
+                        placeholder="请输入您的用户名"
+                    >
+                    <span id="username-hint" class="error-message" role="alert">
+                        ⚠ 请输入用户名
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        密码
+                        <span class="required" aria-hidden="true">*</span>
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        autocomplete="current-password"
+                        required
+                        aria-required="true"
+                        aria-describedby="password-hint"
+                        placeholder="请输入您的密码"
+                    >
+                    <span id="password-hint" class="error-message" role="alert">
+                        ⚠ 请输入密码
+                    </span>
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="submit-btn"
+                    aria-describedby="submit-hint"
+                >
+                    登录
+                </button>
+                <span id="submit-hint" class="visually-hidden">点击登录按钮提交表单</span>
+            </form>
+
+            <div class="form-footer">
+                <a href="#forgot-password" id="forgot-password-link">忘记密码？</a>
+                <a href="#register" id="register-link">创建新账户</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Form validation with accessibility support
+        const form = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        function validateInput(input, errorId) {
+            const isValid = input.value.trim() !== '';
+            const errorMessage = document.getElementById(errorId);
+            
+            if (isValid) {
+                input.setAttribute('aria-invalid', 'false');
+            } else {
+                input.setAttribute('aria-invalid', 'true');
+                // Move focus to first invalid input
+                if (document.activeElement !== input) {
+                    input.focus();
+                }
+            }
+            
+            return isValid;
+        }
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const isUsernameValid = validateInput(usernameInput, 'username-hint');
+            const isPasswordValid = validateInput(passwordInput, 'password-hint');
+            
+            if (isUsernameValid && isPasswordValid) {
+                // Form is valid - in production, would submit here
+                console.log('Form submitted successfully');
+                alert('登录成功！');
+            }
+        });
+
+        // Real-time validation feedback
+        usernameInput.addEventListener('blur', () => validateInput(usernameInput, 'username-hint'));
+        passwordInput.addEventListener('blur', () => validateInput(passwordInput, 'password-hint'));
+
+        // Clear error on input
+        usernameInput.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.setAttribute('aria-invalid', 'false');
+            }
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.setAttribute('aria-invalid', 'false');
+            }
+        });
+    </script>
+</body>
+</html>

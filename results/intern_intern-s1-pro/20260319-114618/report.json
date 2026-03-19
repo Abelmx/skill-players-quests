@@ -1,0 +1,58 @@
+{
+  "total_tasks": 10,
+  "by_model": {
+    "intern/intern-s1-pro": {
+      "task_score": 0.96,
+      "skill_selection_score": 0.8,
+      "instruction_following_score": 0.9,
+      "overall_score": 0.8866666666666667,
+      "total_tasks": 10,
+      "tasks_passed": 10
+    }
+  },
+  "by_category": {
+    "design-standards": {
+      "intern/intern-s1-pro": {
+        "task_score": 0.8,
+        "overall_score": 0.43333333333333335,
+        "count": 2
+      }
+    },
+    "external-api": {
+      "intern/intern-s1-pro": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    },
+    "realtime-data": {
+      "intern/intern-s1-pro": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    },
+    "service-interaction": {
+      "intern/intern-s1-pro": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    },
+    "specialized-tools": {
+      "intern/intern-s1-pro": {
+        "task_score": 1.0,
+        "overall_score": 1.0,
+        "count": 2
+      }
+    }
+  },
+  "global_pass_rate": 1.0,
+  "global_skill_selection": 0.8,
+  "global_instruction_following": 0.9,
+  "global_efficiency": {
+    "avg_input_tokens": 9029.3,
+    "avg_output_tokens": 1290.1,
+    "avg_turns": 4.5
+  }
+}

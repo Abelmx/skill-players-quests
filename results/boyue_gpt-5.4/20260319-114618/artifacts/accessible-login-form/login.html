@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>无障碍登录</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --panel: #fffdf8;
+      --surface: #e9dfcf;
+      --ink: #14213d;
+      --muted: #4f5d75;
+      --line: #2f3b52;
+      --accent: #9a3412;
+      --accent-dark: #7c2d12;
+      --focus: #0f766e;
+      --shadow: rgba(20, 33, 61, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Space Mono', monospace;
+      background:
+        linear-gradient(130deg, var(--bg) 0 62%, #d8e2dc 62% 100%);
+      color: var(--ink);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.1fr) minmax(320px, 0.9fr);
+      min-height: 100vh;
+    }
+
+    .hero {
+      padding: 4rem 5vw 3rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: 5vw;
+      top: 2.5rem;
+      width: min(42vw, 420px);
+      height: 14px;
+      background: var(--accent);
+      box-shadow: 10px 10px 0 var(--ink);
+      animation: slideBar 5s ease-in-out infinite;
+    }
+
+    .eyebrow {
+      margin-top: 4rem;
+      display: inline-block;
+      padding: 0.45rem 0.8rem;
+      border: 2px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      font-family: 'Syne', 'Space Mono', monospace;
+      font-size: clamp(2.8rem, 7vw, 5.6rem);
+      line-height: 0.95;
+      margin: 1.25rem 0 1rem;
+      max-width: 8ch;
+    }
+
+    .hero p {
+      max-width: 34rem;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(160px, 220px));
+      gap: 1rem;
+      margin-top: 2.5rem;
+      padding: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      padding: 1rem;
+      border: 2px solid var(--line);
+      background: rgba(255, 253, 248, 0.85);
+      box-shadow: 8px 8px 0 var(--shadow);
+    }
+
+    .login-zone {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 6rem 5vw 4rem 0;
+      position: relative;
+    }
+
+    .form-shell {
+      width: min(100%, 480px);
+      background: var(--panel);
+      border: 3px solid var(--line);
+      padding: 2rem;
+      box-shadow: -16px 18px 0 var(--surface);
+      transform: translateX(-3.5rem);
+      animation: floatIn 0.7s ease-out both;
+    }
+
+    .form-shell h2 {
+      margin: 0 0 0.75rem;
+      font-family: 'Syne', 'Space Mono', monospace;
+      font-size: 2rem;
+    }
+
+    .form-shell p {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    form {
+      display: grid;
+      gap: 1.1rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    label {
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border: 2px solid var(--line);
+      border-radius: 0;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    input::placeholder {
+      color: #6b7280;
+    }
+
+    input:hover {
+      transform: translateY(-1px);
+    }
+
+    input:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.2);
+    }
+
+    input:focus {
+      border-color: var(--focus);
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin: -0.1rem 0 0;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.35rem;
+    }
+
+    button {
+      border: 2px solid var(--line);
+      background: var(--accent);
+      color: #fff;
+      padding: 0.95rem 1.4rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+      min-width: 140px;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+
+    .assistive {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .required-note {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateX(-1rem) translateY(1.5rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-3.5rem) translateY(0);
+      }
+    }
+
+    @keyframes slideBar {
+      0%, 100% { transform: scaleX(1); transform-origin: left; }
+      50% { transform: scaleX(0.78); transform-origin: left; }
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .login-zone {
+        padding: 2rem 1.25rem;
+      }
+
+      .hero::after {
+        left: 1.25rem;
+        width: 62vw;
+      }
+
+      .form-shell {
+        transform: none;
+        box-shadow: 10px 10px 0 var(--surface);
+      }
+
+      @keyframes floatIn {
+        from {
+          opacity: 0;
+          transform: translateY(1rem);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+
+    @media (max-width: 640px) {
+      .feature-list {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        max-width: 10ch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <span class="eyebrow">安全访问 / Secure Access</span>
+        <h1 id="page-title">欢迎回来，请登录。</h1>
+        <p>
+          这是一个遵循 WCAG 2.1 AA 原则设计的登录界面：高对比度、清晰标签、键盘可访问焦点样式，以及易于理解的表单结构。
+        </p>
+      </div>
+
+      <ul class="feature-list" aria-label="页面可访问性特点">
+        <li>清晰可见的输入标签与必填说明</li>
+        <li>符合对比度要求的文本与按钮</li>
+        <li>支持键盘导航与焦点高亮</li>
+        <li>简洁语义结构，便于辅助技术识别</li>
+      </ul>
+    </section>
+
+    <section class="login-zone" aria-label="登录区域">
+      <div class="form-shell">
+        <h2>账号登录</h2>
+        <p>请输入您的用户名和密码以继续访问系统。</p>
+        <form role="form" action="#" method="post" aria-describedby="form-help required-help">
+          <p id="required-help" class="required-note">带 * 的字段为必填项。</p>
+
+          <div class="field">
+            <label for="username">用户名 *</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              required
+              aria-required="true"
+              aria-describedby="username-help"
+              placeholder="请输入用户名"
+            />
+            <p id="username-help" class="hint">可输入您的邮箱地址或系统用户名。</p>
+          </div>
+
+          <div class="field">
+            <label for="password">密码 *</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              aria-required="true"
+              aria-describedby="password-help"
+              placeholder="请输入密码"
+            />
+            <p id="password-help" class="hint">密码区分大小写，请确认输入准确。</p>
+          </div>
+
+          <div class="actions">
+            <button type="submit">登录</button>
+            <span id="form-help" class="assistive">提交后将进行安全验证。</span>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
