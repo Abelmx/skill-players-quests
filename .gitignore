@@ -30,5 +30,8 @@ Thumbs.db
 # Evaluation results (generated output)
 results/
 
+# Local files (not version controlled)
+_local/
+
 # Misc
 *.log

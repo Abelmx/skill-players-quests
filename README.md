@@ -1,153 +1,237 @@
 # Skill-Players-Quests
 
-LLM Agent Skills 使用能力评测框架。
+[简体中文](README.zh-CN.md)
 
-评测 LLM 在使用 [Agent Skills (SKILL.md 标准)](https://agentskills.io/specification) 时的能力，包括技能发现、指令遵循、工具编排和端到端任务完成。
+Skill-Players-Quests is a framework for evaluating how `(m)LLM` general agents use [Agent Skills](https://agentskills.io/what-are-skills) in realistic task settings.
 
-## 特性
+It is designed for agents that do not start with a large set of built-in specialized tools. Instead, the model is asked to discover relevant skills, load the right `SKILL.md`, follow its instructions, and complete the task end to end. The current repository is an evolving MVP, so the framework, task set, and benchmark coverage will continue to change.
 
-- **两种激活模式**：Catalog + 按需激活（Mode A）和全量注入（Mode B）
-- **多 Provider 支持**：OpenAI / Anthropic / vLLM (OpenAI 兼容)
-- **确定性评分**：Oracle 函数客观打分，无人工判断
-- **横向对比**：多模型、多维度对比报告
-- **真实执行**：所有脚本在真实环境中执行，不使用 mock
+## What This Framework Is
 
-## 快速开始
+This framework evaluates an agent's ability to use skills as an external capability layer:
 
-### 1. 初始化环境
+- choose the right skill from a candidate pool
+- activate the skill by reading its `SKILL.md`
+- follow skill-specific instructions, scripts, and references
+- complete the downstream task with real execution and oracle-based scoring
 
-一键创建虚拟环境并安装全部依赖（框架 + skills 脚本）：
+The focus is not generic tool calling in the abstract. The focus is whether a general agent can successfully work with the skill protocol that is already widely used in practice.
+
+## Features
+
+- Multi-provider, multi-model evaluation with parallel execution.
+- Two skill injection strategies:
+  - progressive injection via `catalog` mode, where the agent sees a skill catalog first and reads full skill content on demand
+  - aggressive injection via `full_inject` mode, where all selected skill content is injected up front
+- Per-task oracle evaluation for:
+  - `skill_selection_score`
+  - `instruction_following_score`
+  - `task_score`
+- Local runs for fast iteration and GitHub Actions runs for a cleaner sandboxed environment.
+- Structured outputs including per-task results, message traces, model reports, and cross-model comparison reports.
+
+## Quick Start
+
+### Local
+
+Set up the full evaluation environment first. This installs not only the framework itself, but also the dependencies required by bundled skills.
 
 ```bash
-bash setup.sh           # 使用系统默认 python3
-bash setup.sh 3.12      # 指定 Python 版本（需 uv）
+bash setup.sh
+# or: bash setup.sh 3.12
 ```
 
-`setup.sh` 做了以下事情：
-1. 创建 `.venv` 虚拟环境
-2. 安装框架核心依赖 + skills 脚本依赖（`pip install -e ".[skills]"`）
-3. 安装 Playwright Chromium 浏览器（`web-screenshot` skill 需要）
-4. 检查系统工具（curl, dig, gh, jq, tar）
+`setup.sh` will:
 
-### 2. 配置 API Key
+- create `.venv`
+- install framework dependencies and bundled skill dependencies
+- install Playwright Chromium for screenshot-related skills
+- check required system tools such as `curl`, `dig`, `gh`, `jq`, and `tar`
+
+Then configure the framework and environment variables.
+
+First, review `configs/default.yaml`. This file defines:
+
+- which providers are available
+- which models belong to each provider
+- which environment variable each provider uses for its API key via `api_key_env`
+- default runtime settings such as `activation_mode`, `max_turns`, and `bash_timeout`
+
+Example:
+
+```yaml
+providers:
+  boyue:
+    api_key_env: "SPQ_API_KEY"
+    base_url: "http://..."
+    models:
+      - "gpt-5.4"
+```
+
+Then create your local `.env` from the template and fill in the required keys `SPQ_API_KEY`:
 
 ```bash
 cp .env.example .env
-# 编辑 .env，填入 API key 等配置
+# edit .env and set the keys referenced by configs/default.yaml
+source activate.sh
 ```
 
-### 3. 激活环境
+In practice:
+
+- if `configs/default.yaml` uses `api_key_env: "SPQ_API_KEY"`, then set `SPQ_API_KEY` in `.env`
+- if it uses `api_key_env: "GUIJI_API_KEY"`, then set `GUIJI_API_KEY`
+- if a task depends on extra skill credentials, also set those, for example `IMAGE_GEN_API_KEY` or `GITHUB_TOKEN`
+
+Environment variables take precedence over `configs/default.yaml`, so you can keep stable defaults in config and override them per machine or per run.
+
+Useful commands:
 
 ```bash
-source activate.sh      # 或使用 alias: spqenv
-```
-
-激活脚本会自动加载 `.env` 并检查依赖完整性。
-
-### 4. 运行评测
-
-```bash
-# 使用 OpenAI 在 catalog 模式下运行所有任务
-python3 -m spq run -p openai -m catalog
-
-# 运行特定任务
-python3 -m spq run -p openai -m catalog -t tokyo-weather -t usd-jpy-rate
-
-# 指定输出路径
-python3 -m spq run -p openai -o results/my-report.json
-
-# 使用 Anthropic 全量注入模式
-python3 -m spq run -p anthropic -m full_inject
-
-# 查看可用 skills 和 tasks
+python3 -m spq show-config
 python3 -m spq list-skills
 python3 -m spq list-tasks
-
-# 查看历史报告
-python3 -m spq report results/report.json
 ```
 
-## 依赖说明
+Run one model on all tasks:
 
-项目依赖分为三层，在 `pyproject.toml` 中明确标注：
-
-### 框架核心 (`dependencies`)
-
-评测框架本身运行所需，安装 `pip install -e .` 即可：
-
-| 包 | 用途 |
-|-----|------|
-| openai | OpenAI / vLLM 兼容 API 调用 |
-| anthropic | Anthropic Claude API 调用 |
-| pydantic | 数据模型验证 |
-| pyyaml | YAML 配置解析 |
-| click | CLI 框架 |
-| python-frontmatter | SKILL.md frontmatter 解析 |
-| rich, tabulate | 终端报告格式化 |
-
-### Skills 脚本依赖 (`[skills]`)
-
-各 skill 内嵌脚本运行所需，安装 `pip install -e ".[skills]"` 追加：
-
-| 包 | 对应 Skill | 用途 |
-|-----|-----------|------|
-| httpx | image-gen | HTTP 请求图像生成 API |
-| Pillow | image-gen, qr-code | 图像处理和验证 |
-| qrcode | qr-code | QR 码生成 |
-| reportlab | pdf-report | PDF 文档生成 |
-| playwright | web-screenshot | 浏览器截图（还需 `playwright install chromium`） |
-
-### 系统工具
-
-部分 skill 的 shell 脚本依赖系统工具：
-
-| 工具 | 对应 Skill | 安装方式（Ubuntu/Debian） |
-|------|-----------|--------------------------|
-| curl | weather, exchange-rate | `apt install curl` |
-| dig | dns-lookup | `apt install dnsutils` |
-| gh | github | [GitHub CLI](https://cli.github.com/) |
-| jq | github | `apt install jq` |
-| tar | file-compressor | 通常预装 |
-
-## 评分维度
-
-| 维度 | 说明 |
-|------|------|
-| task_score | 任务完成正确性（oracle 函数判定） |
-| skill_selection_score | 是否选择了正确的 skill（仅 Mode A） |
-| instruction_following_score | 是否按 SKILL.md 指令执行 |
-
-## 项目结构
-
+```bash
+python3 -m spq run -p boyue --model gpt-5.4 -m catalog
 ```
+
+Run selected tasks only:
+
+```bash
+python3 -m spq run -p boyue --model gpt-5.4 -m catalog \
+  -t tokyo-weather \
+  -t usd-jpy-rate
+```
+
+Run with aggressive injection:
+
+```bash
+python3 -m spq run -p boyue --model gpt-5.4 -m full_inject
+```
+
+Run multiple providers/models and let the framework write outputs under `results/`:
+
+```bash
+python3 -m spq run -p boyue -p guiji -m catalog -j 2
+```
+
+### GitHub Actions Sandbox
+
+For safer and cleaner evaluation, you can run the same benchmark in GitHub Actions inside a containerized environment.
+
+Before running the workflow:
+
+- push your branch to GitHub
+- set repository secrets such as `SPQ_API_KEY`, `GUIJI_API_KEY`, `INTERN_API_KEY`
+- add any skill-specific secrets you need, such as image generation credentials
+
+Then:
+
+1. Open the `SPQ Evaluation` workflow in GitHub Actions.
+2. Optionally specify task IDs, concurrency, and injection mode.
+3. Run the workflow.
+4. Review generated reports and artifacts from the workflow output or the PR created by the workflow.
+
+This is the recommended path when you want a more isolated environment than your local machine.
+
+## Recommended Workflow
+
+For reproducible evaluations, we recommend using a dedicated evaluation branch rather than running directly on `main`.
+
+Suggested flow:
+
+1. Create an evaluation branch and freeze the framework version, task set, and config there.
+2. Run evaluations locally or through GitHub Actions.
+3. Commit the generated `results/` back to that evaluation branch.
+4. Compare runs without mixing benchmark changes into `main`.
+
+This keeps benchmark evolution and benchmark results separate. A more detailed workflow guide will be documented separately.
+
+## Current MVP Coverage
+
+Current bundled coverage in this repository:
+
+- `10` tasks
+- `15` skills
+- `5` task categories
+
+### Task Categories
+
+
+| Category              | Example tasks                                     |
+| --------------------- | ------------------------------------------------- |
+| `realtime-data`       | `tokyo-weather`, `usd-jpy-rate`                   |
+| `external-api`        | `generate-qr-code`, `generate-cyberpunk-image`    |
+| `service-interaction` | `react-bug-issues`, `npm-express-version`         |
+| `design-standards`    | `accessible-login-form`, `brutalist-product-page` |
+| `specialized-tools`   | `domain-dns-lookup`, `webpage-screenshot`         |
+
+
+### Included Skills
+
+Representative bundled skills include:
+
+- `weather`
+- `exchange-rate`
+- `github`
+- `package-registry`
+- `dns-lookup`
+- `web-screenshot`
+- `qr-code`
+- `image-gen`
+- `frontend-design`
+- `code-formatter`
+- `calculator`
+
+The current MVP mostly focuses on single-skill task execution with distractor skills included in each task's candidate pool.
+
+## Results
+
+Each evaluation run writes structured outputs under `results/`:
+
+- `results.jsonl`: one record per task result
+- `traces.jsonl`: raw conversation and tool trace per task
+- `report.json`: aggregated metrics for one model run
+- `report.md`: human-readable per-model report
+- `eval_*-models.md`: cross-model comparison report when multiple models are evaluated together
+
+This makes it easy to inspect both final scores and the actual activation/execution path taken by the agent.
+
+## Scoring
+
+Each task has its own oracle function. Oracles can inspect final text output, files written to the task artifact directory, and execution traces.
+
+The main scoring dimensions are:
+
+
+| Metric                        | Meaning                                                  |
+| ----------------------------- | -------------------------------------------------------- |
+| `task_score`                  | whether the task was actually completed                  |
+| `skill_selection_score`       | whether the agent activated the expected skill           |
+| `instruction_following_score` | whether the agent followed the skill's intended workflow |
+
+
+## Repository Layout
+
+```text
 skill-players-quests/
-├── setup.sh                  # 一键环境初始化
-├── activate.sh               # 环境激活 + 依赖检查
-├── pyproject.toml             # 依赖管理（框架 / skills / dev 分层）
-├── src/spq/                   # 框架核心代码
-│   ├── core/                  # 数据模型和配置
-│   ├── skills/                # SKILL.md 解析器和注册表
-│   ├── providers/             # LLM Provider 抽象层
-│   ├── runtime/               # 执行引擎
-│   ├── evaluation/            # Oracle 框架和评分
-│   └── cli.py                 # CLI 入口
-├── skills/                    # 内置 Skills Pool (~15 个)
-├── tasks/                     # 评测任务 (10 个)
-├── configs/                   # 配置文件
-└── .github/workflows/         # CI 模板
+├── configs/              # framework configuration
+├── skills/               # bundled skills pool
+├── tasks/                # evaluation tasks and task-specific oracles
+├── src/spq/core/         # config and data models
+├── src/spq/skills/       # skill discovery and registry
+├── src/spq/providers/    # model provider adapters
+├── src/spq/runtime/      # prompt building, conversation loop, tool execution
+├── src/spq/evaluation/   # oracle helpers, metrics, reporting
+└── .github/workflows/    # sandboxed CI evaluation workflow
 ```
 
-## 扩展
+## Notes
 
-### 新增 Skill
+- This repository is currently an MVP and will continue to evolve.
+- Task definitions, skill pool composition, oracle logic, and reporting format may still change.
+- If you want stable comparisons, pin the exact branch or commit used for evaluation.
 
-在 `skills/` 下创建目录，包含 `SKILL.md` 和 `scripts/`，会被自动发现。
-如果脚本有额外 Python 依赖，请添加到 `pyproject.toml` 的 `[project.optional-dependencies] skills` 中。
-
-### 新增 Task
-
-在 `tasks/{category}/` 下创建 `task.yaml` + `task_oracle.py`，从 Skills Pool 中选取 `available_skills`。
-
-## GitHub Actions
-
-项目包含 `.github/workflows/evaluate.yaml`，支持在容器中运行评测。通过 Repository Secrets 注入 API Key。
