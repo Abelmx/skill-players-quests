@@ -120,22 +120,20 @@ python3 -m spq run -p boyue -p guiji -m catalog -j 2
 
 ### GitHub Actions 沙盒
 
-如果你希望在更安全、更干净的环境里运行评测，可以直接使用 GitHub Actions。当前 workflow 会在容器环境中执行。
+如果你希望在更安全、更干净的环境里运行评测，可以直接使用 GitHub Actions 的容器环境。
 
 运行前需要先：
 
-- 将你的分支推送到 GitHub
-- 在仓库 Secrets 中配置 `SPQ_API_KEY`、`GUIJI_API_KEY`、`INTERN_API_KEY`
-- 如果某些 skill 依赖额外密钥，也需要一并配置，例如图像生成相关凭证
+1. 创建一个专用的评测分支（如 `eval/quiz-1`），在该分支的 `configs/default.yaml` 中配置好需要评测的模型。
+2. 将分支推送到 GitHub。
+3. 在仓库 Secrets 中配置 `SPQ_API_KEY`、`GUIJI_API_KEY`、`INTERN_API_KEY`，以及 skill 所需的密钥（如图像生成凭证）。
 
 然后：
 
 1. 打开 GitHub Actions 中的 `SPQ Evaluation` workflow。
 2. 按需填写 task IDs、并发度和注入模式。
 3. 启动 workflow。
-4. 在 workflow 输出或自动创建的 PR 中查看评测结果和 artifacts。
-
-如果你希望尽量避免本地环境污染，或者希望得到更隔离的执行环境，这是推荐方式。
+4. 在 workflow 自动创建的 PR 中查看评测报告和产物，确认无误后合并回评测分支。
 
 ## 推荐使用方式
 
@@ -185,6 +183,14 @@ python3 -m spq run -p boyue -p guiji -m catalog -j 2
 - `calculator`
 
 当前 MVP 主要聚焦在单 skill 任务执行，同时在每个 task 中放入若干干扰 skill 作为候选项。
+
+## 评测结果（Sanity Check）
+
+我们进行了一次初始的 sanity check 评测，用于验证框架和评测方法论的可行性。该次评测的完整结果可在 [`eval/quiz-1`](https://github.com/Abelmx/skill-players-quests/tree/eval/quiz-1/results) 分支查看。
+
+本次评测的目的是验证整个流程是否按预期工作 —— 包括任务设计、技能注入、oracle 评分和端到端 pipeline。当前 10 个任务难度较低（单技能、"EASY" 模式），主要作为后续迭代框架和模型的基准线。任务覆盖范围、难度和复杂度将持续扩展。
+
+> **声明**: LLM 的输出具有不确定性。评测结果仅供参考和模型优化使用，不代表 skill-players-quests 项目对任何模型的主观评价。
 
 ## 结果产物
 
