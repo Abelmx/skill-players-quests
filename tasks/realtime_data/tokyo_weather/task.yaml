@@ -14,6 +14,6 @@ expected_actions:
   - type: "bash"
     pattern: "curl.*wttr\\.in|curl.*open-meteo|get_weather"
 oracle:
-  module: "tasks.realtime_data.tokyo_weather_oracle"
+  module: "tasks.realtime_data.tokyo_weather.oracle"
 difficulty: "easy"
 tags: ["realtime-data", "single-skill", "api-call"]

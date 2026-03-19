@@ -29,7 +29,7 @@ def load_tasks(tasks_dir: Path) -> list[TaskDef]:
     tasks: list[TaskDef] = []
     if not tasks_dir.exists():
         return tasks
-    for yaml_file in sorted(tasks_dir.rglob("*.yaml")):
+    for yaml_file in sorted(tasks_dir.rglob("task.yaml")):
         try:
             with open(yaml_file) as f:
                 data = yaml.safe_load(f)
@@ -104,6 +104,7 @@ class Orchestrator:
         return TaskResult(
             task_id=task.id,
             task_name=task.name,
+            task_query=task.query,
             category=task.category,
             provider_name=provider.name,
             model_name=provider.model,

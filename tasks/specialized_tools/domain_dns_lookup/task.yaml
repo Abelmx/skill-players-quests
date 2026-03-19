@@ -14,6 +14,6 @@ expected_actions:
   - type: "bash"
     pattern: "dig|nslookup|lookup\\.sh"
 oracle:
-  module: "tasks.specialized_tools.domain_dns_lookup_oracle"
+  module: "tasks.specialized_tools.domain_dns_lookup.oracle"
 difficulty: "easy"
 tags: ["specialized-tools", "dns", "single-skill"]

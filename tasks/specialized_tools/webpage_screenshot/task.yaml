@@ -14,6 +14,6 @@ expected_actions:
   - type: "bash"
     pattern: "screenshot|playwright"
 oracle:
-  module: "tasks.specialized_tools.webpage_screenshot_oracle"
+  module: "tasks.specialized_tools.webpage_screenshot.oracle"
 difficulty: "medium"
 tags: ["specialized-tools", "browser", "single-skill"]

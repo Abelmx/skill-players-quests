@@ -14,6 +14,6 @@ expected_actions:
   - type: "bash"
     pattern: "gh.*issue|gh_query"
 oracle:
-  module: "tasks.service_interaction.react_bug_issues_oracle"
+  module: "tasks.service_interaction.react_bug_issues.oracle"
 difficulty: "medium"
 tags: ["service-interaction", "github", "single-skill"]

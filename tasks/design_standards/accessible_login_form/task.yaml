@@ -14,6 +14,6 @@ expected_actions:
   - type: "read_skill"
     skill: "frontend-design"
 oracle:
-  module: "tasks.design_standards.accessible_login_form_oracle"
+  module: "tasks.design_standards.accessible_login_form.oracle"
 difficulty: "medium"
 tags: ["design-standards", "accessibility", "single-skill"]

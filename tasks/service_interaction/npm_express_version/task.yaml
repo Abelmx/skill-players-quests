@@ -14,6 +14,6 @@ expected_actions:
   - type: "bash"
     pattern: "curl.*registry\\.npmjs|query_registry"
 oracle:
-  module: "tasks.service_interaction.npm_express_version_oracle"
+  module: "tasks.service_interaction.npm_express_version.oracle"
 difficulty: "easy"
 tags: ["service-interaction", "npm", "single-skill"]

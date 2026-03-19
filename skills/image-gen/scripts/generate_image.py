@@ -105,8 +105,9 @@ def generate(prompt: str, output: str) -> None:
     payload = {
         "model": model,
         "messages": [
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": [{"type": "text", "text": prompt}]},
         ],
+        "modalities": ["text", "image"],
     }
 
     headers = {

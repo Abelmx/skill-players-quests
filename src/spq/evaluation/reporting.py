@@ -37,6 +37,7 @@ def _task_result_to_dict(r: TaskResult) -> dict[str, Any]:
     return {
         "task_id": r.task_id,
         "task_name": r.task_name,
+        "query": r.task_query,
         "category": r.category,
         "provider": r.provider_name,
         "model": r.model_name,
@@ -66,6 +67,20 @@ def append_task_result(jsonl_path: Path, result: TaskResult) -> None:
     with open(jsonl_path, "a", encoding="utf-8") as f:
         line = json.dumps(_task_result_to_dict(result), ensure_ascii=False, default=str)
         f.write(line + "\n")
+
+
+def append_trace(jsonl_path: Path, result: TaskResult) -> None:
+    """Append the full conversation trace (OpenAI message format) for one task."""
+    record = {
+        "task_id": result.task_id,
+        "provider": result.provider_name,
+        "model": result.model_name,
+        "messages": result.trace.raw_messages,
+        "error": result.error,
+    }
+    jsonl_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(jsonl_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
 
 
 def save_summary_report(report_path: Path, results: list[TaskResult]) -> None:

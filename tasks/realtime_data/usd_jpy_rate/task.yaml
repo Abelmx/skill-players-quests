@@ -14,6 +14,6 @@ expected_actions:
   - type: "bash"
     pattern: "curl.*frankfurter|get_rate"
 oracle:
-  module: "tasks.realtime_data.usd_jpy_rate_oracle"
+  module: "tasks.realtime_data.usd_jpy_rate.oracle"
 difficulty: "easy"
 tags: ["realtime-data", "single-skill", "api-call"]

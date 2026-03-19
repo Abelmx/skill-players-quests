@@ -100,7 +100,24 @@ class ConversationManager:
             if trace.turns:
                 trace.final_output = trace.turns[-1].assistant_text
 
+        trace.raw_messages = [self._serialize_message(m) for m in messages]
         return trace
+
+    @staticmethod
+    def _serialize_message(msg: Message) -> dict[str, Any]:
+        """Convert a Message to an OpenAI-compatible dict, omitting None fields."""
+        d: dict[str, Any] = {"role": msg.role}
+        if msg.content is not None:
+            d["content"] = msg.content
+        if msg.tool_calls is not None:
+            d["tool_calls"] = msg.tool_calls
+        if msg.tool_call_id is not None:
+            d["tool_call_id"] = msg.tool_call_id
+        if msg.name is not None:
+            d["name"] = msg.name
+        if msg.reasoning_content is not None:
+            d["reasoning_content"] = msg.reasoning_content
+        return d
 
     async def _process_tool_call(
         self,

@@ -17,6 +17,7 @@ from spq.core.config import load_config
 from spq.core.models import ActivationMode, ProviderConfig, TaskResult
 from spq.evaluation.reporting import (
     append_task_result,
+    append_trace,
     load_results_jsonl,
     print_category_matrix,
     print_model_summary,
@@ -159,6 +160,7 @@ async def _run_model_tasks(
                 artifacts_dir=str(task_artifacts),
             )
             append_task_result(jsonl_path, result)
+            append_trace(run_dir / "traces.jsonl", result)
 
             progress.done += 1
             if result.oracle_result.task_score >= 1.0:

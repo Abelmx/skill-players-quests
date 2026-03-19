@@ -14,6 +14,6 @@ expected_actions:
   - type: "bash"
     pattern: "generate_image"
 oracle:
-  module: "tasks.external_api.generate_cyberpunk_image_oracle"
+  module: "tasks.external_api.generate_cyberpunk_image.oracle"
 difficulty: "medium"
 tags: ["external-api", "image-generation", "single-skill"]

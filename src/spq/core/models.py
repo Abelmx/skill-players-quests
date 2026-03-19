@@ -67,6 +67,7 @@ class ExecutionTrace(BaseModel):
     model_name: str
     activation_mode: ActivationMode
     artifacts_dir: str = ""
+    raw_messages: list[dict[str, Any]] = Field(default_factory=list)
     turns: list[ConversationTurn] = Field(default_factory=list)
     final_output: str = ""
     activated_skills: list[str] = Field(default_factory=list)
@@ -109,6 +110,7 @@ class TaskResult(BaseModel):
 
     task_id: str
     task_name: str
+    task_query: str = ""
     category: str
     provider_name: str
     model_name: str

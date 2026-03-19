@@ -16,6 +16,6 @@ expected_actions:
   - type: "bash"
     pattern: "write_file|cat.*index\\.html"
 oracle:
-  module: "tasks.design_standards.brutalist_product_page_oracle"
+  module: "tasks.design_standards.brutalist_product_page.oracle"
 difficulty: "medium"
 tags: ["design-standards", "frontend", "single-skill"]
