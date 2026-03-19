@@ -15,7 +15,9 @@ providers:
   boyue:
     api_key_env: "SPQ_API_KEY"
     base_url: "http://35.220.164.252:3888/v1"
-    models: "gpt-5.4"
+    models:
+      - "gpt-5.4"
+      - "claude-sonnet-4-20250514"
   guiji:
     api_key_env: "GUIJI_API_KEY"
     base_url: "https://api.siliconflow.cn/v1/"

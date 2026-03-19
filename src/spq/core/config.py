@@ -67,7 +67,10 @@ def _resolve_provider(name: str, yaml_cfg: dict | None = None) -> ProviderConfig
     api_key_env = _env(f"{prefix}API_KEY_ENV") or yaml_cfg.get("api_key_env", f"{prefix}API_KEY")
     base_url = _env(f"{prefix}BASE_URL") or yaml_cfg.get("base_url")
 
-    models: list[str] = yaml_cfg.get("models", [])
+    raw_models = yaml_cfg.get("models", [])
+    if isinstance(raw_models, str):
+        raw_models = [raw_models]
+    models: list[str] = raw_models
     if not models:
         single = _env(f"{prefix}MODEL") or yaml_cfg.get("model", "")
         if single:
