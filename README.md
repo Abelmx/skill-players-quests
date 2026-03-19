@@ -124,18 +124,16 @@ For safer and cleaner evaluation, you can run the same benchmark in GitHub Actio
 
 Before running the workflow:
 
-- push your branch to GitHub
-- set repository secrets such as `SPQ_API_KEY`, `GUIJI_API_KEY`, `INTERN_API_KEY`
-- add any skill-specific secrets you need, such as image generation credentials
+1. Create a dedicated evaluation branch (e.g. `eval/quiz-1`) and configure the models you want to evaluate in `configs/default.yaml` on that branch.
+2. Push the branch to GitHub.
+3. Set repository secrets such as `SPQ_API_KEY`, `GUIJI_API_KEY`, `INTERN_API_KEY`, and any skill-specific secrets (e.g. image generation credentials).
 
 Then:
 
 1. Open the `SPQ Evaluation` workflow in GitHub Actions.
 2. Optionally specify task IDs, concurrency, and injection mode.
 3. Run the workflow.
-4. Review generated reports and artifacts from the workflow output or the PR created by the workflow.
-
-This is the recommended path when you want a more isolated environment than your local machine.
+4. Review the generated reports and artifacts in the PR automatically created by the workflow, then merge the results back into your evaluation branch.
 
 ## Recommended Workflow
 
@@ -187,6 +185,14 @@ Representative bundled skills include:
 - `calculator`
 
 The current MVP mostly focuses on single-skill task execution with distractor skills included in each task's candidate pool.
+
+## Evaluation Results (Sanity Check)
+
+We ran an initial sanity-check evaluation to validate the framework and methodology. Results from this run are available on the [`eval/quiz-1`](https://github.com/Abelmx/skill-players-quests/tree/eval/quiz-1/results) branch.
+
+This evaluation is intended to verify the feasibility of the approach -- whether the task design, skill injection, oracle scoring, and end-to-end pipeline work as expected. The current 10 tasks are relatively simple (single-skill, "EASY" mode) and primarily serve as a baseline for iterating on both the framework and the models under test. Task coverage, difficulty, and complexity will continue to expand.
+
+> **Disclaimer**: LLM outputs are non-deterministic. Results are for reference and model optimization only, and should not be interpreted as a subjective judgement of any model by the skill-players-quests project.
 
 ## Results
 
